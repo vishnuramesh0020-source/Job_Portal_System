@@ -6,25 +6,18 @@ import {
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  Lock,
+  BarChart3,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 
 export const Home = () => {
   const { isAuthenticated, user } = useAuth();
 
-  const dashboardPath =
-    user?.role === 'recruiter' ? '/recruiter/dashboard' : '/candidate/dashboard';
-
   return (
-    <div className="space-y-16 py-12">
+    <div className="space-y-16 py-12 animate-fadeIn">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-          <span>Job Portal System • Module 1 Authentication Active</span>
-        </div>
-
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight">
           Find Your Dream Role or Hire Exceptional Talent with{' '}
           <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
@@ -33,19 +26,28 @@ export const Home = () => {
         </h1>
 
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          A modern job portal platform connecting ambitious candidates with forward-thinking employers. Featuring robust role-based authentication, protected routes, and profile management.
+          A high-performance job portal connecting ambitious candidates with verified employers. Complete with interactive metrics, real-time activity feeds, and saved job watchlists.
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
           {isAuthenticated ? (
-            <Link
-              to={dashboardPath}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:scale-105"
-            >
-              Go to Your {user?.role === 'recruiter' ? 'Recruiter' : 'Candidate'} Dashboard
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:scale-105"
+              >
+                <BarChart3 className="w-5 h-5" />
+                Go to Master Dashboard
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to={user?.role === 'recruiter' ? '/recruiter/dashboard' : '/candidate/dashboard'}
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm transition-all"
+              >
+                My {user?.role === 'recruiter' ? 'Recruiter' : 'Candidate'} Profile
+              </Link>
+            </div>
           ) : (
             <>
               <Link
@@ -87,15 +89,15 @@ export const Home = () => {
               <ul className="space-y-2.5 text-xs text-slate-600 pt-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Personalized candidate dashboard
+                  Personalized candidate dashboard & saved jobs
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Live application status updates
+                  Live application status & activity updates
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Protected user profile stored in Local Storage
+                  Quick Apply with profile sync in Local Storage
                 </li>
               </ul>
             </div>
@@ -135,7 +137,7 @@ export const Home = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Role-based route authorization guard
+                  Real-time activity log & KPI tracking
                 </li>
               </ul>
             </div>
@@ -158,40 +160,40 @@ export const Home = () => {
             Engineered with Modern Web Standards
           </h2>
           <p className="text-sm text-slate-500 mt-2">
-            Module 1 Authentication features checklist
+            Everything you need for seamless recruitment and job search
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-5 rounded-2xl border border-slate-200">
+            <BarChart3 className="w-7 h-7 text-indigo-600 mb-3" />
+            <h4 className="font-bold text-slate-900 text-sm">Dashboard Statistics</h4>
+            <p className="text-xs text-slate-500 mt-1">
+              Monthly trends, industry categories, and application funnel stages.
+            </p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-slate-200">
+            <Briefcase className="w-7 h-7 text-indigo-600 mb-3" />
+            <h4 className="font-bold text-slate-900 text-sm">Active Job Postings</h4>
+            <p className="text-xs text-slate-500 mt-1">
+              Explore active listings, 1-click bookmarks, and quick applicant workflows.
+            </p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-slate-200">
+            <Layers className="w-7 h-7 text-indigo-600 mb-3" />
+            <h4 className="font-bold text-slate-900 text-sm">Quick Action Cards</h4>
+            <p className="text-xs text-slate-500 mt-1">
+              Instant modals for posting openings, quick applying, and managing bookmarks.
+            </p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-slate-200">
             <ShieldCheck className="w-7 h-7 text-indigo-600 mb-3" />
-            <h4 className="font-bold text-slate-900 text-sm">Protected Routes</h4>
+            <h4 className="font-bold text-slate-900 text-sm">Recent Activities</h4>
             <p className="text-xs text-slate-500 mt-1">
-              Role-guarded dashboards ensure users only access permitted views.
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200">
-            <Lock className="w-7 h-7 text-indigo-600 mb-3" />
-            <h4 className="font-bold text-slate-900 text-sm">Form Validation & Password Toggle</h4>
-            <p className="text-xs text-slate-500 mt-1">
-              React Hook Form with instant inline validation and show/hide password buttons.
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200">
-            <Users className="w-7 h-7 text-indigo-600 mb-3" />
-            <h4 className="font-bold text-slate-900 text-sm">Role Selection</h4>
-            <p className="text-xs text-slate-500 mt-1">
-              First-class dual roles: Candidate vs Recruiter with tailor-made flows.
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200">
-            <Sparkles className="w-7 h-7 text-indigo-600 mb-3" />
-            <h4 className="font-bold text-slate-900 text-sm">Local Storage Sync</h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Persistent user records and active sessions retained across page reloads.
+              Chronological live timeline of platform actions and status progressions.
             </p>
           </div>
         </div>

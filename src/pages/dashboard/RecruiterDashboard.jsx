@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useDashboard } from '../../hooks/useDashboard';
+import { Link } from 'react-router-dom';
+import PostJobModal from '../../components/dashboard/PostJobModal';
 import {
   Building2,
   Mail,
@@ -8,56 +12,37 @@ import {
   Users,
   Briefcase,
   CheckCircle2,
-  Clock,
   LogOut,
   ShieldCheck,
+  FileText,
+  Sparkles,
 } from 'lucide-react';
 
 export const RecruiterDashboard = () => {
   const { user, logout } = useAuth();
+  const {
+    totalJobs,
+    activeJobPostings,
+    totalCandidates,
+    totalApplications,
+    activeJobs,
+    postNewJob,
+  } = useDashboard();
+
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   // Recruiter stats overview
   const stats = [
-    { label: 'Active Jobs', value: '4', icon: Briefcase, color: 'text-indigo-600 bg-indigo-50' },
-    { label: 'Total Applicants', value: '48', icon: Users, color: 'text-blue-600 bg-blue-50' },
-    { label: 'Shortlisted', value: '12', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
-    { label: 'Interviews Scheduled', value: '5', icon: Clock, color: 'text-amber-600 bg-amber-50' },
-  ];
-
-  const postedJobs = [
-    {
-      id: 'job-1',
-      title: 'Senior Frontend Engineer (React 19)',
-      department: 'Engineering',
-      type: 'Full-Time',
-      applicants: 19,
-      status: 'Active',
-      posted: '3 days ago',
-    },
-    {
-      id: 'job-2',
-      title: 'Product Design Lead (UI/UX)',
-      department: 'Product',
-      type: 'Full-Time',
-      applicants: 14,
-      status: 'Active',
-      posted: '1 week ago',
-    },
-    {
-      id: 'job-3',
-      title: 'DevOps & Cloud Architect',
-      department: 'Infrastructure',
-      type: 'Contract',
-      applicants: 15,
-      status: 'Active',
-      posted: '2 weeks ago',
-    },
+    { label: 'Platform Jobs', value: totalJobs, icon: Briefcase, color: 'text-indigo-600 bg-indigo-50' },
+    { label: 'Active Postings', value: activeJobPostings, icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
+    { label: 'Total Candidates', value: totalCandidates, icon: Users, color: 'text-purple-600 bg-purple-50' },
+    { label: 'Total Applications', value: totalApplications, icon: FileText, color: 'text-blue-600 bg-blue-50' },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide uppercase border border-indigo-500/30">
@@ -67,15 +52,33 @@ export const RecruiterDashboard = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               {user?.companyName || 'Recruiter Workspace'}
             </h1>
-            <p className="text-slate-300 text-sm max-w-xl">
+            <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
               Managed by <span className="text-white font-medium">{user?.fullName}</span>. Oversee your talent pipeline, review applicants, and publish new roles.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-indigo-700 text-xs font-bold shadow-md hover:bg-indigo-50 transition-all"
+            >
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              Master Analytics
+            </Link>
+
             <button
+              type="button"
+              onClick={() => setIsPostModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-900/30 transition-all cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Post Job</span>
+            </button>
+
+            <button
+              type="button"
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold backdrop-blur-sm border border-white/20 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
@@ -166,8 +169,11 @@ export const RecruiterDashboard = () => {
               </div>
             )}
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+            <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
               <span className="font-mono">User ID: {user?.id}</span>
+              <Link to="/dashboard" className="text-indigo-600 hover:underline font-semibold">
+                Go to Dashboard →
+              </Link>
             </div>
           </div>
         </div>
@@ -178,16 +184,20 @@ export const RecruiterDashboard = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">Active Job Postings</h3>
-                <p className="text-xs text-slate-500">Manage your active recruiting pipelines</p>
+                <p className="text-xs text-slate-500">Live listings updated in local storage</p>
               </div>
-              <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer">
+              <button
+                type="button"
+                onClick={() => setIsPostModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer"
+              >
                 <PlusCircle className="w-4 h-4" />
                 Post New Job
               </button>
             </div>
 
             <div className="divide-y divide-slate-100">
-              {postedJobs.map((job) => (
+              {activeJobs.map((job) => (
                 <div
                   key={job.id}
                   className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -195,17 +205,20 @@ export const RecruiterDashboard = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-slate-900 text-sm">{job.title}</h4>
                     <p className="text-xs text-slate-500">
-                      {job.department} • {job.type} • Posted {job.posted}
+                      {job.company} • {job.category} • {job.location} • Posted {job.postedDate}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
                       <Users className="w-3.5 h-3.5" />
-                      {job.applicants} Applicants
+                      {job.applicantsCount || 0} Applicants
                     </span>
-                    <button className="text-xs font-medium text-slate-600 hover:text-indigo-600 cursor-pointer">
-                      View Details
-                    </button>
+                    <Link
+                      to="/dashboard"
+                      className="text-xs font-medium text-slate-600 hover:text-indigo-600"
+                    >
+                      Manage
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -213,6 +226,14 @@ export const RecruiterDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Post Job Modal */}
+      <PostJobModal
+        isOpen={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+        onSubmitJob={postNewJob}
+        defaultCompany={user?.companyName || 'TechCorp Solutions'}
+      />
     </div>
   );
 };

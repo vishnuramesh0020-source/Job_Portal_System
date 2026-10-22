@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useDashboard } from '../../hooks/useDashboard';
+import { Link } from 'react-router-dom';
 import {
   Mail,
   Phone,
@@ -8,91 +10,137 @@ import {
   Building,
   ShieldCheck,
   LogOut,
+  Briefcase,
+  Bookmark,
+  Building2,
+  FileText,
+  Sparkles,
 } from 'lucide-react';
 
 export const CandidateDashboard = () => {
   const { user, logout } = useAuth();
+  const {
+    totalCompanies,
+    activeJobPostings,
+    savedJobsCount,
+    savedJobs,
+    toggleSaveJob,
+  } = useDashboard();
+
   const [activeTab, setActiveTab] = useState('applied');
 
-  // Mock application data for candidate
+  // Candidate applications
   const applications = [
     {
       id: 'app-1',
-      title: 'Senior Frontend Engineer',
-      company: 'TechFlow Systems',
+      title: 'Senior Frontend Engineer (React 19)',
+      company: 'TechCorp Solutions',
       location: 'Remote, US',
-      salary: '$120,000 - $145,000',
+      salary: '$130,000 - $155,000',
       appliedDate: 'Oct 18, 2026',
       status: 'Interview Scheduled',
       statusColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     },
     {
       id: 'app-2',
-      title: 'React & Tailwind Specialist',
+      title: 'Full Stack Node & React Developer',
       company: 'Digital Horizon Labs',
-      location: 'New York, NY (Hybrid)',
-      salary: '$110,000 - $130,000',
-      appliedDate: 'Oct 14, 2026',
+      location: 'Austin, TX',
+      salary: '$120,000 - $145,000',
+      appliedDate: 'Oct 16, 2026',
       status: 'Under Review',
       statusColor: 'bg-amber-50 text-amber-700 border-amber-200',
     },
     {
       id: 'app-3',
-      title: 'Full Stack JavaScript Engineer',
+      title: 'Cloud DevOps Architect',
       company: 'CloudSphere Global',
       location: 'San Francisco, CA',
-      salary: '$135,000 - $160,000',
+      salary: '$145,000 - $175,000',
       appliedDate: 'Oct 10, 2026',
       status: 'Application Submitted',
       statusColor: 'bg-blue-50 text-blue-700 border-blue-200',
     },
   ];
 
-  const savedJobs = [
-    {
-      id: 'save-1',
-      title: 'Staff UI Engineer',
-      company: 'NextGen AI',
-      location: 'Austin, TX (Remote)',
-      posted: '2 days ago',
-      type: 'Full Time',
-    },
-    {
-      id: 'save-2',
-      title: 'Lead Frontend Architect',
-      company: 'OmniCloud Corp',
-      location: 'Seattle, WA',
-      posted: '4 days ago',
-      type: 'Full Time',
-    },
-  ];
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
       {/* Top Welcome Banner */}
-      <div className="bg-gradient-to-r from-indigo-700 via-indigo-600 to-violet-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-200/50 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-indigo-700 via-indigo-600 to-violet-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-200/50 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wide uppercase">
               <ShieldCheck className="w-4 h-4 text-emerald-300" />
-              Authenticated Candidate Portal
+              Candidate Profile & Career Portal
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Welcome back, {user?.fullName}!
             </h1>
-            <p className="text-indigo-100 text-sm max-w-xl">
-              {user?.title || 'Job Seeker'} • Track your submissions, view saved opportunities, and manage your candidate profile.
+            <p className="text-indigo-100 text-xs sm:text-sm max-w-xl">
+              {user?.title || 'Job Seeker'} • Track your submissions, manage saved positions, and monitor your candidate profile.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-indigo-700 text-xs font-bold shadow-md hover:bg-indigo-50 transition-all"
+            >
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              Platform Analytics
+            </Link>
+
             <button
+              type="button"
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold backdrop-blur-sm border border-white/20 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Performance Stats Bar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[11px] font-semibold uppercase text-slate-400 block">Active Openings</span>
+            <strong className="text-xl font-black text-slate-900">{activeJobPostings}</strong>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <Bookmark className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[11px] font-semibold uppercase text-slate-400 block">Saved Jobs</span>
+            <strong className="text-xl font-black text-slate-900">{savedJobsCount}</strong>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[11px] font-semibold uppercase text-slate-400 block">My Submissions</span>
+            <strong className="text-xl font-black text-slate-900">{applications.length}</strong>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Building2 className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[11px] font-semibold uppercase text-slate-400 block">Hiring Companies</span>
+            <strong className="text-xl font-black text-slate-900">{totalCompanies}</strong>
           </div>
         </div>
       </div>
@@ -158,8 +206,11 @@ export const CandidateDashboard = () => {
               </div>
             )}
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+            <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
               <span className="font-mono">Storage ID: {user?.id}</span>
+              <Link to="/dashboard" className="text-indigo-600 hover:underline font-semibold">
+                Go to Dashboard →
+              </Link>
             </div>
           </div>
         </div>
@@ -169,6 +220,7 @@ export const CandidateDashboard = () => {
           {/* Navigation Tabs */}
           <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
             <button
+              type="button"
               onClick={() => setActiveTab('applied')}
               className={`pb-2 text-sm font-bold transition-all relative cursor-pointer ${
                 activeTab === 'applied'
@@ -179,6 +231,7 @@ export const CandidateDashboard = () => {
               My Applications ({applications.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('saved')}
               className={`pb-2 text-sm font-bold transition-all relative cursor-pointer ${
                 activeTab === 'saved'
@@ -238,22 +291,44 @@ export const CandidateDashboard = () => {
           {/* Tab 2: Saved Jobs */}
           {activeTab === 'saved' && (
             <div className="space-y-4">
-              {savedJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between gap-4"
-                >
-                  <div>
-                    <h4 className="font-bold text-slate-900">{job.title}</h4>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {job.company} • {job.location} • {job.posted}
-                    </p>
-                  </div>
-                  <button className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs transition-colors cursor-pointer">
-                    Apply Now
-                  </button>
+              {savedJobs.length === 0 ? (
+                <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
+                  You have not saved any jobs yet. Visit the{' '}
+                  <Link to="/dashboard" className="text-indigo-600 font-bold hover:underline">
+                    Master Dashboard
+                  </Link>{' '}
+                  to browse and bookmark openings.
                 </div>
-              ))}
+              ) : (
+                savedJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between gap-4"
+                  >
+                    <div>
+                      <h4 className="font-bold text-slate-900">{job.title}</h4>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {job.company} • {job.location} • {job.salary}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleSaveJob(job.id, job.title)}
+                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 text-xs font-medium cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                      <Link
+                        to="/dashboard"
+                        className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors"
+                      >
+                        Apply
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>

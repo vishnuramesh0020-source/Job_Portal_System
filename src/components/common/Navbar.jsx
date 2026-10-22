@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Briefcase, LogOut, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { Briefcase, LogOut, LayoutDashboard, ChevronRight, User } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -12,7 +12,7 @@ export const Navbar = () => {
     navigate('/login');
   };
 
-  const dashboardPath =
+  const roleDashboardPath =
     user?.role === 'recruiter' ? '/recruiter/dashboard' : '/candidate/dashboard';
 
   return (
@@ -48,17 +48,32 @@ export const Navbar = () => {
             </Link>
 
             {isAuthenticated && (
-              <Link
-                to={dashboardPath}
-                className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${
-                  location.pathname.includes('/dashboard')
-                    ? 'text-indigo-600 font-semibold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  to="/dashboard"
+                  className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${
+                    location.pathname === '/dashboard'
+                      ? 'text-indigo-600 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+
+                <Link
+                  to={roleDashboardPath}
+                  className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${
+                    location.pathname.startsWith('/candidate') ||
+                    location.pathname.startsWith('/recruiter')
+                      ? 'text-indigo-600 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  My Profile & Portal
+                </Link>
+              </>
             )}
           </nav>
 
@@ -68,7 +83,7 @@ export const Navbar = () => {
               <div className="flex items-center gap-3">
                 {/* User Info Capsule */}
                 <Link
-                  to={dashboardPath}
+                  to="/dashboard"
                   className="hidden sm:flex items-center gap-2.5 py-1 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 transition-colors border border-slate-200"
                 >
                   <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">
@@ -92,6 +107,7 @@ export const Navbar = () => {
 
                 {/* Logout Button */}
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-200 cursor-pointer"
                   title="Sign out"

@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
+import { DashboardProvider } from './context/DashboardContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -12,6 +13,7 @@ import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import Dashboard from './pages/dashboard/Dashboard';
 import CandidateDashboard from './pages/dashboard/CandidateDashboard';
 import RecruiterDashboard from './pages/dashboard/RecruiterDashboard';
 import NotFound from './pages/NotFound';
@@ -20,57 +22,69 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
+        <DashboardProvider>
+          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-              {/* Protected Candidate Route */}
-              <Route
-                path="/candidate/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['candidate']}>
-                    <CandidateDashboard />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Master Responsive Dashboard Route */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Protected Recruiter Route */}
-              <Route
-                path="/recruiter/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['recruiter']}>
-                    <RecruiterDashboard />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected Candidate Route */}
+                <Route
+                  path="/candidate/dashboard"
+                  element={
+                    <ProtectedRoute allowedRoles={['candidate']}>
+                      <CandidateDashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Fallback & 404 */}
-              <Route path="/404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
-          </main>
-          <Footer />
+                {/* Protected Recruiter Route */}
+                <Route
+                  path="/recruiter/dashboard"
+                  element={
+                    <ProtectedRoute allowedRoles={['recruiter']}>
+                      <RecruiterDashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-          {/* Toast Notification Container */}
-          <ToastContainer
-            position="top-right"
-            autoClose={3500}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </div>
+                {/* Fallback & 404 */}
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
+            </main>
+            <Footer />
+
+            {/* Toast Notification Container */}
+            <ToastContainer
+              position="top-right"
+              autoClose={3500}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </div>
+        </DashboardProvider>
       </AuthProvider>
     </Router>
   );

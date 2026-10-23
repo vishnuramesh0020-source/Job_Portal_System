@@ -16,6 +16,8 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import Dashboard from './pages/dashboard/Dashboard';
 import CandidateDashboard from './pages/dashboard/CandidateDashboard';
 import RecruiterDashboard from './pages/dashboard/RecruiterDashboard';
+import CompaniesList from './pages/companies/CompaniesList';
+import CompanyDetails from './pages/companies/CompanyDetails';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -33,7 +35,11 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Master Responsive Dashboard Route */}
+                {/* Company Management Routes (Module 3) */}
+                <Route path="/companies" element={<CompaniesList />} />
+                <Route path="/companies/:id" element={<CompanyDetails />} />
+
+                {/* Master Responsive Dashboard Route (Module 2) */}
                 <Route
                   path="/dashboard"
                   element={

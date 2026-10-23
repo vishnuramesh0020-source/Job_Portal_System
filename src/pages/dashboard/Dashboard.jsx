@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import StatCard from '../../components/dashboard/StatCard';
@@ -8,7 +9,6 @@ import RecentActivities from '../../components/dashboard/RecentActivities';
 import SavedJobsSection from '../../components/dashboard/SavedJobsSection';
 import PostJobModal from '../../components/dashboard/PostJobModal';
 import QuickApplyModal from '../../components/dashboard/QuickApplyModal';
-import CompanyDirectoryModal from '../../components/dashboard/CompanyDirectoryModal';
 
 import {
   Building2,
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const {
     totalCompanies,
@@ -40,7 +41,6 @@ export const Dashboard = () => {
     monthlyTrends,
     categoryBreakdown,
     applicationStatusStages,
-    companies,
     activeJobs,
     toggleSaveJob,
     postNewJob,
@@ -56,7 +56,6 @@ export const Dashboard = () => {
   // Modal controls
   const [isPostJobOpen, setIsPostJobOpen] = useState(false);
   const [isQuickApplyOpen, setIsQuickApplyOpen] = useState(false);
-  const [isCompaniesOpen, setIsCompaniesOpen] = useState(false);
   const [selectedJobForApply, setSelectedJobForApply] = useState(null);
 
   // Search filter for active jobs tab
@@ -201,7 +200,7 @@ export const Dashboard = () => {
                 colorScheme="amber"
                 badgeText="Verified"
                 subtitle="Active Employers"
-                onClick={() => setIsCompaniesOpen(true)}
+                onClick={() => navigate('/companies')}
               />
 
               {/* 2. Total Jobs */}
@@ -270,7 +269,7 @@ export const Dashboard = () => {
             onOpenQuickApply={() => handleOpenApply(null)}
             onViewSavedJobs={() => setActiveTab('saved-jobs')}
             onViewAllJobs={() => setActiveTab('active-jobs')}
-            onViewCompanies={() => setIsCompaniesOpen(true)}
+            onViewCompanies={() => navigate('/companies')}
             onResetData={resetToDefaults}
           />
 
@@ -459,13 +458,6 @@ export const Dashboard = () => {
         jobs={activeJobs}
         selectedJob={selectedJobForApply}
         currentUser={user}
-      />
-
-      {/* MODAL 3: Verified Companies Directory */}
-      <CompanyDirectoryModal
-        isOpen={isCompaniesOpen}
-        onClose={() => setIsCompaniesOpen(false)}
-        companies={companies}
       />
     </div>
   );

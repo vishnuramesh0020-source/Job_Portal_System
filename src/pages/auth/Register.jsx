@@ -30,7 +30,6 @@ export const Register = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -47,8 +46,6 @@ export const Register = () => {
     },
     mode: 'onTouched',
   });
-
-  const passwordValue = watch('password');
 
   const onSubmit = async (data) => {
     setAuthError('');
@@ -441,8 +438,8 @@ export const Register = () => {
                     }`}
                     {...register('confirmPassword', {
                       required: 'Please confirm your password',
-                      validate: (value) =>
-                        value === passwordValue || 'Passwords do not match',
+                      validate: (value, formValues) =>
+                        value === formValues.password || 'Passwords do not match',
                     })}
                   />
                   <button

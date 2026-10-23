@@ -44,7 +44,6 @@ export const ForgotPassword = () => {
   const {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
-    watch: watchPassword,
     formState: { errors: passwordErrors },
   } = useForm({
     defaultValues: {
@@ -53,8 +52,6 @@ export const ForgotPassword = () => {
     },
     mode: 'onTouched',
   });
-
-  const newPasswordValue = watchPassword('newPassword');
 
   // Step 1: Check Email
   const onEmailSubmit = async (data) => {
@@ -350,8 +347,8 @@ export const ForgotPassword = () => {
                     }`}
                     {...registerPassword('confirmPassword', {
                       required: 'Please confirm your new password',
-                      validate: (value) =>
-                        value === newPasswordValue || 'Passwords do not match',
+                      validate: (value, formValues) =>
+                        value === formValues.newPassword || 'Passwords do not match',
                     })}
                   />
                   <button

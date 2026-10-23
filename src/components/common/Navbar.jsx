@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Briefcase, LogOut, LayoutDashboard, ChevronRight, User } from 'lucide-react';
+import { Briefcase, LogOut, LayoutDashboard, ChevronRight, User, Building2 } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -47,6 +47,18 @@ export const Navbar = () => {
               Home
             </Link>
 
+            <Link
+              to="/companies"
+              className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${
+                location.pathname.startsWith('/companies')
+                  ? 'text-indigo-600 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              Companies
+            </Link>
+
             {isAuthenticated && (
               <>
                 <Link
@@ -71,7 +83,7 @@ export const Navbar = () => {
                   }`}
                 >
                   <User className="w-4 h-4" />
-                  My Profile & Portal
+                  My Portal
                 </Link>
               </>
             )}

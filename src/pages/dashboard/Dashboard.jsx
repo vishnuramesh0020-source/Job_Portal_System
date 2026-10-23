@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import StatCard from '../../components/dashboard/StatCard';
@@ -7,8 +7,9 @@ import DashboardStats from '../../components/dashboard/DashboardStats';
 import QuickActionCards from '../../components/dashboard/QuickActionCards';
 import RecentActivities from '../../components/dashboard/RecentActivities';
 import SavedJobsSection from '../../components/dashboard/SavedJobsSection';
-import PostJobModal from '../../components/dashboard/PostJobModal';
+import JobFormModal from '../../components/jobs/JobFormModal';
 import QuickApplyModal from '../../components/dashboard/QuickApplyModal';
+import { formatSalaryNumber } from '../../utils/formatSalary';
 
 import {
   Building2,
@@ -20,7 +21,7 @@ import {
   RefreshCw,
   PlusCircle,
   Search,
-  DollarSign,
+  IndianRupee,
   MapPin,
   Clock,
   ArrowRight,
@@ -268,7 +269,7 @@ export const Dashboard = () => {
             onOpenPostJob={() => setIsPostJobOpen(true)}
             onOpenQuickApply={() => handleOpenApply(null)}
             onViewSavedJobs={() => setActiveTab('saved-jobs')}
-            onViewAllJobs={() => setActiveTab('active-jobs')}
+            onViewAllJobs={() => navigate('/jobs')}
             onViewCompanies={() => navigate('/companies')}
             onResetData={resetToDefaults}
           />
@@ -293,7 +294,8 @@ export const Dashboard = () => {
                 savedJobs={savedJobs}
                 onUnsaveJob={toggleSaveJob}
                 onApplyJob={handleOpenApply}
-                onBrowseJobs={() => setActiveTab('active-jobs')}
+                onBrowseJobs={() => setActiveTab('saved-jobs')}
+                isWidget={true}
               />
             </div>
           </div>
@@ -379,9 +381,12 @@ export const Dashboard = () => {
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors line-clamp-1 block"
+                      >
                         {job.title}
-                      </h3>
+                      </Link>
                       <p className="text-xs font-medium text-slate-600 mt-0.5">
                         {job.company}
                       </p>
@@ -393,8 +398,8 @@ export const Dashboard = () => {
                         <span>{job.location}</span>
                       </div>
                       <div className="flex items-center gap-1.5 font-semibold text-emerald-600">
-                        <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                        <span>{job.salary}</span>
+                        <IndianRupee className="w-3.5 h-3.5 shrink-0" />
+                        <span>{formatSalaryNumber(job.salary)}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
                         <Clock className="w-3.5 h-3.5 shrink-0" />
@@ -408,9 +413,13 @@ export const Dashboard = () => {
                   </div>
 
                   <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-slate-400">
-                      {job.applicantsCount || 0} applicants
-                    </span>
+                    <Link
+                      to={`/jobs/${job.id}`}
+                      className="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                    >
+                      <span>Details</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
                     <button
                       type="button"
                       onClick={() => handleOpenApply(job)}
@@ -434,6 +443,7 @@ export const Dashboard = () => {
           onUnsaveJob={toggleSaveJob}
           onApplyJob={handleOpenApply}
           onBrowseJobs={() => setActiveTab('active-jobs')}
+          isWidget={false}
         />
       )}
 
@@ -443,7 +453,7 @@ export const Dashboard = () => {
       )}
 
       {/* MODAL 1: Post New Job */}
-      <PostJobModal
+      <JobFormModal
         isOpen={isPostJobOpen}
         onClose={() => setIsPostJobOpen(false)}
         onSubmitJob={postNewJob}

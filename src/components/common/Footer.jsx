@@ -18,9 +18,12 @@ export const Footer = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-6 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-500">
             <Link to="/" className="hover:text-indigo-600 transition-colors">
               Home
+            </Link>
+            <Link to="/jobs" className="hover:text-indigo-600 transition-colors">
+              Jobs
             </Link>
             <Link to="/companies" className="hover:text-indigo-600 transition-colors">
               Companies
@@ -39,8 +42,9 @@ export const Footer = () => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-1 text-xs text-slate-400">
-            <span>Built with React, Vite & Tailwind CSS</span>
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Operational • React 19 & Tailwind CSS</span>
           </div>
         </div>
       </div>

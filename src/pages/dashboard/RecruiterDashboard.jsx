@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import { Link } from 'react-router-dom';
-import PostJobModal from '../../components/dashboard/PostJobModal';
+import JobFormModal from '../../components/jobs/JobFormModal';
 import {
   Building2,
   Mail,
@@ -197,38 +197,49 @@ export const RecruiterDashboard = () => {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {activeJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                >
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-slate-900 text-sm">{job.title}</h4>
-                    <p className="text-xs text-slate-500">
-                      {job.company} • {job.category} • {job.location} • Posted {job.postedDate}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
-                      <Users className="w-3.5 h-3.5" />
-                      {job.applicantsCount || 0} Applicants
-                    </span>
-                    <Link
-                      to="/dashboard"
-                      className="text-xs font-medium text-slate-600 hover:text-indigo-600"
-                    >
-                      Manage
-                    </Link>
-                  </div>
+              {activeJobs.length === 0 ? (
+                <div className="py-8 text-center text-xs text-slate-500">
+                  No active job postings yet. Click "Post New Job" above to create your first listing.
                 </div>
-              ))}
+              ) : (
+                activeJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="space-y-1">
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="font-bold text-slate-900 text-sm hover:text-indigo-600 transition-colors block"
+                      >
+                        {job.title}
+                      </Link>
+                      <p className="text-xs text-slate-500">
+                        {job.company} • {job.category} • {job.location} • Posted {job.postedDate}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
+                        <Users className="w-3.5 h-3.5" />
+                        {job.applicantsCount || 0} Applicants
+                      </span>
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                      >
+                        View / Edit →
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* Post Job Modal */}
-      <PostJobModal
+      <JobFormModal
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
         onSubmitJob={postNewJob}

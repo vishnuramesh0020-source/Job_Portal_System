@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { X, Send } from 'lucide-react';
+import { formatSalaryWithSymbol } from '../../utils/formatSalary';
 
 export const QuickApplyModal = ({
   isOpen,
@@ -79,7 +80,7 @@ export const QuickApplyModal = ({
             >
               {jobs.map((job) => (
                 <option key={job.id} value={job.id}>
-                  {job.title} — {job.company} ({job.salary})
+                  {job.title} — {job.company} ({formatSalaryWithSymbol(job.salaryRange || job.salary)})
                 </option>
               ))}
             </select>

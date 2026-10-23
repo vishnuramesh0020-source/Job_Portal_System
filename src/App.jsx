@@ -18,6 +18,8 @@ import CandidateDashboard from './pages/dashboard/CandidateDashboard';
 import RecruiterDashboard from './pages/dashboard/RecruiterDashboard';
 import CompaniesList from './pages/companies/CompaniesList';
 import CompanyDetails from './pages/companies/CompanyDetails';
+import JobsList from './pages/jobs/JobsList';
+import JobDetails from './pages/jobs/JobDetails';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -35,11 +37,15 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Company Management Routes (Module 3) */}
+                {/* Job Posting Routes */}
+                <Route path="/jobs" element={<JobsList />} />
+                <Route path="/jobs/:id" element={<JobDetails />} />
+
+                {/* Company Management Routes */}
                 <Route path="/companies" element={<CompaniesList />} />
                 <Route path="/companies/:id" element={<CompanyDetails />} />
 
-                {/* Master Responsive Dashboard Route (Module 2) */}
+                {/* Master Responsive Dashboard Route */}
                 <Route
                   path="/dashboard"
                   element={

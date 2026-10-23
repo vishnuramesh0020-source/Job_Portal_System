@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { companyService, INDUSTRY_OPTIONS } from '../../services/companyService';
 import CompanyCard from '../../components/companies/CompanyCard';
 import CompanyFormModal from '../../components/companies/CompanyFormModal';
@@ -24,10 +25,24 @@ export const CompaniesList = () => {
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // URL Search Parameters
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentQ = searchParams.get('q') || '';
+  const currentInd = searchParams.get('industry') || 'all';
+
   // Search, Filter & Sort states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedIndustry, setSelectedIndustry] = useState('all');
+  const [searchQuery, setSearchQuery] = useState(currentQ);
+  const [selectedIndustry, setSelectedIndustry] = useState(currentInd);
   const [sortBy, setSortBy] = useState('name-asc');
+
+  // Sync if URL search parameters change
+  const [prevUrlParams, setPrevUrlParams] = useState({ q: currentQ, ind: currentInd });
+  if (prevUrlParams.q !== currentQ || prevUrlParams.ind !== currentInd) {
+    setPrevUrlParams({ q: currentQ, ind: currentInd });
+    setSearchQuery(currentQ);
+    setSelectedIndustry(currentInd);
+    setCurrentPage(1);
+  }
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -190,6 +205,7 @@ export const CompaniesList = () => {
     setSelectedIndustry('all');
     setSortBy('name-asc');
     setCurrentPage(1);
+    setSearchParams({});
   };
 
   return (
@@ -198,10 +214,6 @@ export const CompaniesList = () => {
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide uppercase border border-indigo-500/30">
-              <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-              Module 3 • Company Management
-            </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
               Verified Companies Directory
             </h1>

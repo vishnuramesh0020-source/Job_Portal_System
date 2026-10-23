@@ -9,6 +9,7 @@ import {
   categoryBreakdown,
   applicationStatusStages,
 } from '../data/mockDashboardData';
+import { formatSalaryWithSymbol } from '../utils/formatSalary';
 
 const COMPANIES_KEY = 'job_portal_companies';
 const JOBS_KEY = 'job_portal_jobs';
@@ -65,13 +66,29 @@ export const dashboardService = {
     initializeDashboardStorage();
 
     const companies = getFromStorage(COMPANIES_KEY, initialCompanies);
-    const jobs = getFromStorage(JOBS_KEY, initialJobs);
+    const rawJobs = getFromStorage(JOBS_KEY, initialJobs);
+    let needsMigration = false;
+    const jobs = rawJobs.map((j) => {
+      const orig = j.salaryRange || j.salary || '';
+      const formatted = formatSalaryWithSymbol(orig);
+      if (formatted !== orig) {
+        needsMigration = true;
+      }
+      return {
+        ...j,
+        salaryRange: formatted,
+        salary: formatted,
+      };
+    });
+    if (needsMigration) {
+      setToStorage(JOBS_KEY, jobs);
+    }
     const candidates = getFromStorage(CANDIDATES_KEY, initialCandidates);
     const applications = getFromStorage(APPLICATIONS_KEY, initialApplications);
     const savedJobIds = getFromStorage(SAVED_JOBS_KEY, initialSavedJobs);
     const recentActivities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
 
-    const activeJobs = jobs.filter((j) => j.status === 'Active');
+    const activeJobs = jobs.filter((j) => j.status === 'Active' || j.status === 'Open');
     const savedJobsList = jobs.filter((j) => savedJobIds.includes(j.id));
 
     return {
@@ -162,15 +179,27 @@ export const dashboardService = {
       id: `job-${Date.now()}`,
       title: jobData.title,
       company: jobData.company || 'TechCorp Solutions',
-      companyId: 'comp-1',
+      companyId: jobData.companyId || 'comp-1',
       category: jobData.category || 'Engineering',
+      employmentType: jobData.employmentType || jobData.type || 'Full-time',
+      type: jobData.employmentType || jobData.type || 'Full-time',
+      experienceLevel: jobData.experienceLevel || 'Mid Level',
+      salaryRange: formatSalaryWithSymbol(jobData.salaryRange || jobData.salary || '12,00,000 - 18,00,000'),
+      salary: formatSalaryWithSymbol(jobData.salaryRange || jobData.salary || '12,00,000 - 18,00,000'),
       location: jobData.location || 'Remote, US',
-      type: jobData.type || 'Full-Time',
-      salary: jobData.salary || '$100,000 - $130,000',
-      status: 'Active',
+      locationType: jobData.locationType || 'Remote',
+      skills: Array.isArray(jobData.skills)
+        ? jobData.skills
+        : typeof jobData.skills === 'string'
+        ? jobData.skills.split(',').map((s) => s.trim()).filter(Boolean)
+        : ['React', 'JavaScript'],
+      deadline: jobData.deadline || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+      status: jobData.status || 'Open',
       applicantsCount: 0,
       postedDate: new Date().toISOString().split('T')[0],
       description: jobData.description || 'Exciting career opportunity at our growing company.',
+      requirements: jobData.requirements || 'Proven relevant experience and passion for team collaboration.',
+      responsibilities: jobData.responsibilities || 'Deliver quality software features and maintain high operational standards.',
     };
 
     const updatedJobs = [newJob, ...jobs];

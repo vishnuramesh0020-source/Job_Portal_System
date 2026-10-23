@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import { Link } from 'react-router-dom';
+import { formatSalaryWithSymbol } from '../../utils/formatSalary';
 import {
   Mail,
   Phone,
@@ -36,7 +37,7 @@ export const CandidateDashboard = () => {
       title: 'Senior Frontend Engineer (React 19)',
       company: 'TechCorp Solutions',
       location: 'Remote, US',
-      salary: '$130,000 - $155,000',
+      salary: '₹18,00,000 - ₹24,00,000',
       appliedDate: 'Oct 18, 2026',
       status: 'Interview Scheduled',
       statusColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -46,7 +47,7 @@ export const CandidateDashboard = () => {
       title: 'Full Stack Node & React Developer',
       company: 'Digital Horizon Labs',
       location: 'Austin, TX',
-      salary: '$120,000 - $145,000',
+      salary: '₹14,00,000 - ₹20,00,000',
       appliedDate: 'Oct 16, 2026',
       status: 'Under Review',
       statusColor: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -56,7 +57,7 @@ export const CandidateDashboard = () => {
       title: 'Cloud DevOps Architect',
       company: 'CloudSphere Global',
       location: 'San Francisco, CA',
-      salary: '$145,000 - $175,000',
+      salary: '₹22,00,000 - ₹30,00,000',
       appliedDate: 'Oct 10, 2026',
       status: 'Application Submitted',
       statusColor: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -303,12 +304,17 @@ export const CandidateDashboard = () => {
                 savedJobs.map((job) => (
                   <div
                     key={job.id}
-                    className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between gap-4"
+                    className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-xs transition-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div>
-                      <h4 className="font-bold text-slate-900">{job.title}</h4>
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="font-bold text-slate-900 hover:text-indigo-600 transition-colors block"
+                      >
+                        {job.title}
+                      </Link>
                       <p className="text-xs text-slate-500 mt-1">
-                        {job.company} • {job.location} • {job.salary}
+                        {job.company} • {job.location} • {formatSalaryWithSymbol(job.salaryRange || job.salary)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -320,7 +326,7 @@ export const CandidateDashboard = () => {
                         Remove
                       </button>
                       <Link
-                        to="/dashboard"
+                        to={`/jobs/${job.id}`}
                         className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors"
                       >
                         Apply

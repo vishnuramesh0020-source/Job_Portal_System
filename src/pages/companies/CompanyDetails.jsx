@@ -5,6 +5,7 @@ import { useDashboard } from '../../hooks/useDashboard';
 import CompanyFormModal from '../../components/companies/CompanyFormModal';
 import DeleteCompanyModal from '../../components/companies/DeleteCompanyModal';
 import QuickApplyModal from '../../components/dashboard/QuickApplyModal';
+import { formatSalaryNumber } from '../../utils/formatSalary';
 import { toast } from 'react-toastify';
 import {
   Building2,
@@ -14,12 +15,13 @@ import {
   Users,
   ExternalLink,
   ArrowLeft,
+  ArrowRight,
   Briefcase,
   Edit3,
   Trash2,
   CheckCircle2,
   Bookmark,
-  DollarSign,
+  IndianRupee,
   Clock,
   Send,
   Loader2,
@@ -326,12 +328,15 @@ export const CompanyDetails = () => {
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors line-clamp-1 block"
+                      >
                         {job.title}
-                      </h4>
+                      </Link>
                       <p className="text-xs font-semibold text-emerald-600 mt-1 flex items-center gap-1">
-                        <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                        <span>{job.salary}</span>
+                        <IndianRupee className="w-3.5 h-3.5 shrink-0" />
+                        <span>{formatSalaryNumber(job.salary)}</span>
                       </p>
                     </div>
 
@@ -348,9 +353,13 @@ export const CompanyDetails = () => {
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-slate-400">
-                      {job.type || 'Full-Time'}
-                    </span>
+                    <Link
+                      to={`/jobs/${job.id}`}
+                      className="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                    >
+                      <span>Details</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
                     <button
                       type="button"
                       onClick={() => handleOpenApply(job)}

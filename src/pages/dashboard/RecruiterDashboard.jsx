@@ -49,7 +49,7 @@ export const RecruiterDashboard = () => {
               <ShieldCheck className="w-4 h-4 text-indigo-400" />
               Recruiter & Employer Portal
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               {user?.companyName || 'Recruiter Workspace'}
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm max-w-xl">

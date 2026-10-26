@@ -206,7 +206,7 @@ export const companyService = {
       id: `act-${Date.now()}`,
       type: 'company',
       title: 'New Company Registered',
-      description: `${newCompany.name} (${newCompany.industry}) joined the JobPortal ecosystem.`,
+      description: `${newCompany.name} (${newCompany.industry}) joined the VS Job Portal ecosystem.`,
       timestamp: 'Just now',
       badge: 'Company Added',
       badgeColor: 'amber',

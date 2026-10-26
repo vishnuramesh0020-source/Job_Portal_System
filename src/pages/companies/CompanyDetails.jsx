@@ -284,7 +284,7 @@ export const CompanyDetails = () => {
               Active Job Openings at {company.name} ({companyJobs.length})
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Direct application through JobPortal candidate workflow
+              Direct application through VS Job Portal candidate workflow
             </p>
           </div>
         </div>

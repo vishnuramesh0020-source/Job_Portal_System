@@ -88,7 +88,7 @@ export const Register = () => {
             Create Your Account
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Join thousands of professionals and employers on JobPortal.
+            Join thousands of professionals and employers on VS Job Portal.
           </p>
         </div>
 
@@ -518,7 +518,7 @@ export const Register = () => {
 
           {/* Footer Link */}
           <div className="mt-6 text-center text-xs text-slate-600">
-            Already registered on JobPortal?{' '}
+            Already registered on VS Job Portal?{' '}
             <Link
               to="/login"
               className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"

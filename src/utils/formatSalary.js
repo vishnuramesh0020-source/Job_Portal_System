@@ -59,4 +59,57 @@ export const formatSalaryWithSymbol = (salary) => {
   return `₹${num}`;
 };
 
+/**
+ * Standard salary filter brackets for filtering jobs by compensation
+ */
+export const SALARY_FILTER_OPTIONS = [
+  { id: 'all', label: 'All Salary Ranges', min: 0, max: Infinity },
+  { id: 'under-10', label: 'Under ₹10 Lakhs (< 10 LPA)', min: 0, max: 1000000 },
+  { id: '10-15', label: '₹10 - ₹15 Lakhs (10 - 15 LPA)', min: 1000000, max: 1500000 },
+  { id: '15-25', label: '₹15 - ₹25 Lakhs (15 - 25 LPA)', min: 1500000, max: 2500000 },
+  { id: 'above-25', label: 'Above ₹25 Lakhs (> 25 LPA)', min: 2500000, max: Infinity },
+];
+
+/**
+ * Extracts minimum and maximum numerical salary values from a salary string
+ */
+export const parseSalaryMinMax = (rawSalary) => {
+  if (!rawSalary) return { min: 0, max: 0 };
+  const normalized = normalizeSalaryString(String(rawSalary));
+  const parts = normalized.split(/[-–—]|to/i).map((p) => p.trim()).filter(Boolean);
+
+  const parseNum = (str) => {
+    if (!str) return 0;
+    const clean = str.replace(/[^\d.]/g, '');
+    const val = parseFloat(clean);
+    if (isNaN(val)) return 0;
+    if (val < 200 && /lpa|lakh|lac/i.test(str || normalized)) {
+      return val * 100000;
+    }
+    return val;
+  };
+
+  if (parts.length >= 2) {
+    const min = parseNum(parts[0]);
+    const max = parseNum(parts[1]);
+    return { min: Math.min(min, max), max: Math.max(min, max) };
+  } else if (parts.length === 1) {
+    const val = parseNum(parts[0]);
+    return { min: val, max: val };
+  }
+  return { min: 0, max: 0 };
+};
+
+/**
+ * Checks whether a job's salary range matches or overlaps with the selected salary filter
+ */
+export const matchesSalaryRange = (salaryString, salaryFilterId) => {
+  if (!salaryFilterId || salaryFilterId === 'all') return true;
+  const option = SALARY_FILTER_OPTIONS.find((opt) => opt.id === salaryFilterId);
+  if (!option) return true;
+  const { min: jobMin, max: jobMax } = parseSalaryMinMax(salaryString);
+  if (jobMin === 0 && jobMax === 0) return true;
+  return jobMax >= option.min && jobMin <= option.max;
+};
+
 export default formatSalaryNumber;

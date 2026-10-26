@@ -74,7 +74,7 @@ export const CandidateDashboard = () => {
               <ShieldCheck className="w-4 h-4 text-emerald-300" />
               Candidate Profile & Career Portal
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               Welcome back, {user?.fullName}!
             </h1>
             <p className="text-indigo-100 text-xs sm:text-sm max-w-xl">

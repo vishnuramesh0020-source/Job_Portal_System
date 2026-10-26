@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
       const registeredUser = await authService.register(userData);
       setUser(registeredUser);
       toast.success(
-        `Registration successful! Welcome to JobPortal, ${registeredUser.fullName}.`
+        `Registration successful! Welcome to VS Job Portal, ${registeredUser.fullName}.`
       );
       return { success: true, user: registeredUser };
     } catch (error) {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Home, AlertTriangle } from 'lucide-react';
+import { Briefcase, AlertTriangle } from 'lucide-react';
 
 export const NotFound = () => {
   return (
@@ -13,11 +13,11 @@ export const NotFound = () => {
         The page you are looking for doesn't exist or has been moved.
       </p>
       <Link
-        to="/"
+        to="/jobs"
         className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all"
       >
-        <Home className="w-4 h-4" />
-        Return to Home
+        <Briefcase className="w-4 h-4" />
+        Explore Jobs Directory
       </Link>
     </div>
   );

@@ -68,7 +68,7 @@ export const QuickActionCards = ({
     {
       id: 'companies',
       title: 'Explore Companies',
-      description: 'Connect with innovative companies hiring on JobPortal.',
+      description: 'Connect with innovative companies hiring on VS Job Portal.',
       icon: Building2,
       gradient: 'from-amber-500 to-amber-600',
       badge: 'Employers',

@@ -84,7 +84,7 @@ export const Dashboard = () => {
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               Welcome back, {user?.fullName || 'Professional'}!
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">

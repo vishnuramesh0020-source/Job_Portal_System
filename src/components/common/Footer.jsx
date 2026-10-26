@@ -1,9 +1,16 @@
 import { Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const currentYear = new Date().getFullYear();
 
 export const Footer = () => {
+  const location = useLocation();
+
+  // Hide footer on Login page to ensure exact single-screen no-scroll layout
+  if (location.pathname === '/login') {
+    return null;
+  }
+
   return (
     <footer className="bg-white border-t border-slate-200 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -12,16 +19,13 @@ export const Footer = () => {
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
               <Briefcase className="w-4 h-4" />
             </div>
-            <span className="font-bold text-slate-800">JobPortal System</span>
+            <span className="font-bold text-slate-800">VS Job Portal</span>
             <span className="text-xs text-slate-500 ml-2">
               © {currentYear} All rights reserved.
             </span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-500">
-            <Link to="/" className="hover:text-indigo-600 transition-colors">
-              Home
-            </Link>
             <Link to="/jobs" className="hover:text-indigo-600 transition-colors">
               Jobs
             </Link>

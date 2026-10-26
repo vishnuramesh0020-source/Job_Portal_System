@@ -9,7 +9,6 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 
 // Pages
-import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
@@ -31,14 +30,15 @@ function App() {
             <Navbar />
             <main className="flex-grow">
               <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
+                {/* Default root redirects directly to Jobs Search Directory */}
+                <Route path="/" element={<Navigate to="/jobs" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Job Posting Routes */}
+                {/* Job Posting & Job Search Routes */}
                 <Route path="/jobs" element={<JobsList />} />
+                <Route path="/search" element={<JobsList />} />
                 <Route path="/jobs/:id" element={<JobDetails />} />
 
                 {/* Company Management Routes */}

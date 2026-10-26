@@ -117,7 +117,7 @@ const JobFormModalContent = ({
             <p className="text-xs text-slate-500 mt-0.5">
               {isEditMode
                 ? 'Update role compensation, deadline, required skills, and status'
-                : 'Publish an active position to hire talent across the JobPortal ecosystem'}
+                : 'Publish an active position to hire talent across the VS Job Portal ecosystem'}
             </p>
           </div>
         </div>

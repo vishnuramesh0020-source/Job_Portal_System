@@ -461,7 +461,7 @@ export const JobDetails = () => {
 
           {/* Quick Apply Callout Card */}
           <div className="bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-3xl p-6 text-white shadow-xl space-y-4">
-            <h3 className="font-bold text-base">Ready to take the next step?</h3>
+            <h3 className="font-bold text-base text-white">Ready to take the next step?</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
               Submit your candidate application in 1-click. Your profile and portfolio will be immediately transmitted to the hiring team.
             </p>

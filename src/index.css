@@ -24,6 +24,21 @@
 :root {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color-scheme: light;
+
+  /* Custom Light Sandal & Dark Green Theme for Toast Notifications */
+  --toastify-color-light: #f7f2e7;
+  --toastify-toast-background: #f7f2e7;
+  --toastify-text-color-light: #0a2b1a;
+  --toastify-font-family: inherit;
+  --toastify-toast-bd-radius: 1rem;
+  --toastify-toast-shadow: 0 10px 25px -5px rgba(10, 43, 26, 0.12), 0 8px 10px -6px rgba(10, 43, 26, 0.08);
+  --toastify-color-progress-light: #16462d;
+  --toastify-color-success: #16462d;
+  --toastify-icon-color-success: #16462d;
+  --toastify-color-info: #215639;
+  --toastify-icon-color-info: #215639;
+  --toastify-color-warning: #b45309;
+  --toastify-color-error: #b91c1c;
 }
 
 body {
@@ -31,4 +46,49 @@ body {
   min-height: 100vh;
   background-color: #f7f2e7;
   color: #0f3822;
+}
+
+/* React Toastify Light Sandal & Dark Green Overrides */
+.Toastify__toast {
+  background-color: #f7f2e7 !important;
+  color: #0a2b1a !important;
+  border: 1px solid #dfd7c4 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(10, 43, 26, 0.12), 0 8px 10px -6px rgba(10, 43, 26, 0.08) !important;
+  font-family: inherit !important;
+  padding: 12px 16px !important;
+}
+
+.Toastify__toast-body {
+  color: #0a2b1a !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.Toastify__progress-bar {
+  background: linear-gradient(to right, #215639, #0a2b1a) !important;
+  height: 3px !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #b91c1c !important;
+}
+
+.Toastify__close-button {
+  color: #16462d !important;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+.Toastify__toast-icon svg {
+  fill: #16462d !important;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #b91c1c !important;
 }

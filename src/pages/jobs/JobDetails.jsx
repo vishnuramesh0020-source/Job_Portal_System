@@ -118,7 +118,7 @@ export const JobDetails = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col items-center justify-center space-y-4">
+      <div className="w-full px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
         <p className="text-sm font-semibold text-slate-500">Loading job posting details...</p>
       </div>
@@ -127,7 +127,7 @@ export const JobDetails = () => {
 
   if (error || !job) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-4">
+      <div className="w-full px-4 sm:px-6 py-16 text-center space-y-4">
         <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
           <AlertCircle className="w-8 h-8" />
         </div>
@@ -145,7 +145,7 @@ export const JobDetails = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* Top Back Nav & Quick Breadcrumbs */}
       <div className="flex items-center justify-between">
         <Link

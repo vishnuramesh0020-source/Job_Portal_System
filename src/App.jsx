@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
 import { DashboardProvider } from './context/DashboardContext';
@@ -26,9 +25,9 @@ function App() {
     <Router>
       <AuthProvider>
         <DashboardProvider>
-          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 w-full">
             <Navbar />
-            <main className="flex-grow">
+            <main className="flex-grow w-full">
               <Routes>
                 {/* Default root redirects directly to Jobs Search Directory */}
                 <Route path="/" element={<Navigate to="/jobs" replace />} />
@@ -63,6 +62,12 @@ function App() {
                       <CandidateDashboard />
                     </ProtectedRoute>
                   }
+                />
+
+                {/* Unified Candidate Profile Route */}
+                <Route
+                  path="/candidate/profile"
+                  element={<Navigate to="/candidate/dashboard" replace />}
                 />
 
                 {/* Protected Recruiter Route */}

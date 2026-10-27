@@ -81,6 +81,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Update current user profile in state & storage
+  const updateUserProfile = (updatedData) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...updatedData };
+      saveCurrentSession(updated);
+      return updated;
+    });
+  };
+
   // Handle Logout
   const logout = () => {
     authService.logout();
@@ -98,6 +107,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     resetPassword,
     verifyEmail,
+    updateUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

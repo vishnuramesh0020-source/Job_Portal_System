@@ -36,6 +36,8 @@ export const QuickApplyModal = ({
       candidateEmail: formData.candidateEmail,
       candidatePhone: formData.candidatePhone,
       candidateId: currentUser?.id || 'cand-user',
+      coverNote: formData.coverNote,
+      portfolioUrl: formData.portfolioUrl,
     });
 
     if (res.success) {

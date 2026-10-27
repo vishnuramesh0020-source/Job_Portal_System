@@ -53,6 +53,19 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [refreshData]);
 
+  // Withdraw Application (Candidate Action)
+  const withdrawApplication = useCallback((applicationId, reason) => {
+    try {
+      const updated = dashboardService.withdrawApplication(applicationId, reason);
+      refreshData();
+      toast.info(`Application for "${updated.jobTitle}" has been withdrawn.`);
+      return { success: true, application: updated };
+    } catch (e) {
+      toast.error('Failed to withdraw application.');
+      return { success: false, error: e.message };
+    }
+  }, [refreshData]);
+
   // Reset to initial mock data
   const resetToDefaults = useCallback(() => {
     const defaults = dashboardService.resetToDefaults();
@@ -67,6 +80,7 @@ export const DashboardProvider = ({ children }) => {
     toggleSaveJob,
     postNewJob,
     applyToJob,
+    withdrawApplication,
     resetToDefaults,
   };
 

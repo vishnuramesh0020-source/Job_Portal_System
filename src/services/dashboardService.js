@@ -239,12 +239,17 @@ export const dashboardService = {
 
     const newApplication = {
       id: `app-${Date.now()}`,
-      candidateId: applicantData.candidateId || 'cand-user',
+      candidateId: applicantData.candidateId || 'user-cand-1',
       candidateName: applicantData.candidateName || 'Applicant',
-      candidateEmail: applicantData.candidateEmail || 'candidate@example.com',
+      candidateEmail: applicantData.candidateEmail || 'candidate@jobportal.com',
+      candidatePhone: applicantData.candidatePhone || '',
+      coverNote: applicantData.coverNote || '',
+      portfolioUrl: applicantData.portfolioUrl || '',
       jobId: jobId,
       jobTitle: targetJob.title,
       company: targetJob.company,
+      location: targetJob.location || 'Remote, US',
+      salary: targetJob.salaryRange || targetJob.salary || '₹18,00,000 - ₹24,00,000',
       status: 'Application Submitted',
       statusColor: 'blue',
       appliedDate: new Date().toISOString(),
@@ -269,6 +274,46 @@ export const dashboardService = {
     setToStorage(ACTIVITIES_KEY, activities);
 
     return newApplication;
+  },
+
+  // Withdraw Application (Candidate Action - UI simulation)
+  withdrawApplication: (applicationId, reason = 'Withdrawn by candidate') => {
+    initializeDashboardStorage();
+    const applications = getFromStorage(APPLICATIONS_KEY, initialApplications);
+    let activities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+
+    const appIndex = applications.findIndex((a) => a.id === applicationId);
+    if (appIndex === -1) {
+      throw new Error('Application not found');
+    }
+
+    const targetApp = applications[appIndex];
+    const updatedApp = {
+      ...targetApp,
+      status: 'Withdrawn',
+      statusColor: 'slate',
+      withdrawnAt: new Date().toISOString(),
+      withdrawReason: reason,
+    };
+
+    applications[appIndex] = updatedApp;
+    setToStorage(APPLICATIONS_KEY, applications);
+
+    const newActivity = {
+      id: `act-${Date.now()}`,
+      type: 'application',
+      title: 'Application Withdrawn',
+      description: `${targetApp.candidateName || 'Candidate'} withdrew application for "${targetApp.jobTitle}" at ${targetApp.company}. Reason: ${reason}`,
+      timestamp: 'Just now',
+      badge: 'Withdrawn',
+      badgeColor: 'slate',
+      iconName: 'FileText',
+    };
+
+    activities = [newActivity, ...activities.slice(0, 9)];
+    setToStorage(ACTIVITIES_KEY, activities);
+
+    return updatedApp;
   },
 
   // Reset to initial demo mock data

@@ -77,7 +77,7 @@ export const CompanyFormModal = ({
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-800 text-white flex items-center justify-center shadow-lg shadow-emerald-950/20">
             <Building2 className="w-6 h-6" />
           </div>
           <div>
@@ -108,7 +108,7 @@ export const CompanyFormModal = ({
                 className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                   errors.name
                     ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                    : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                 }`}
                 {...register('name', {
                   required: 'Company name is required',
@@ -128,7 +128,7 @@ export const CompanyFormModal = ({
                 Industry Category *
               </label>
               <select
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('industry', { required: 'Please select an industry' })}
               >
                 {INDUSTRY_OPTIONS.map((ind) => (
@@ -148,7 +148,7 @@ export const CompanyFormModal = ({
                   <Users className="w-4 h-4" />
                 </div>
                 <select
-                  className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                   {...register('employees')}
                 >
                   {EMPLOYEE_RANGES.map((range) => (
@@ -177,7 +177,7 @@ export const CompanyFormModal = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.location
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('location', { required: 'Location is required' })}
                 />
@@ -201,7 +201,7 @@ export const CompanyFormModal = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.website
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('website', {
                     required: 'Website is required',
@@ -234,7 +234,7 @@ export const CompanyFormModal = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.contactEmail
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('contactEmail', {
                     required: 'Contact email is required',
@@ -259,7 +259,7 @@ export const CompanyFormModal = ({
               <input
                 type="url"
                 placeholder="https://images.unsplash.com/..."
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('logo')}
               />
             </div>
@@ -276,7 +276,7 @@ export const CompanyFormModal = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                 errors.description
                   ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                  : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
               }`}
               {...register('description', {
                 required: 'Company description is required',
@@ -305,7 +305,7 @@ export const CompanyFormModal = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-70 text-white font-semibold shadow-md shadow-indigo-100 transition-all flex items-center gap-2 cursor-pointer text-xs"
+              className="px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:bg-emerald-950 disabled:opacity-70 text-white font-semibold shadow-md shadow-emerald-950/20 transition-all flex items-center gap-2 cursor-pointer text-xs"
             >
               {isSubmitting ? (
                 <>

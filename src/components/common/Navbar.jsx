@@ -10,6 +10,7 @@ import {
   Building2,
   Menu,
   X,
+  BarChart3,
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -42,6 +43,7 @@ export const Navbar = () => {
     location.pathname.startsWith('/jobs') || location.pathname.startsWith('/search') || location.pathname === '/';
   const isCompaniesActive = location.pathname.startsWith('/companies');
   const isDashboardActive = location.pathname === '/dashboard';
+  const isReportsActive = location.pathname.startsWith('/reports');
   const isPortalActive =
     location.pathname.startsWith('/candidate') || location.pathname.startsWith('/recruiter');
 
@@ -51,11 +53,11 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/jobs" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
-              <Briefcase className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-800 flex items-center justify-center text-white shadow-md shadow-emerald-900/10 group-hover:scale-105 transition-transform">
+              <Briefcase className="w-5 h-5 text-emerald-100" />
             </div>
             <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+              <span className="text-xl font-black bg-gradient-to-r from-[#0A2B1A] via-[#0F3822] to-emerald-800 bg-clip-text text-transparent">
                 VS Job Portal
               </span>
             </div>
@@ -66,25 +68,25 @@ export const Navbar = () => {
             <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
               <Link
                 to="/jobs"
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
                   isJobsActive
-                    ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                    : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
                 }`}
               >
-                <Briefcase className="w-4 h-4" />
+                <Briefcase className="w-4 h-4 text-emerald-800" />
                 Jobs
               </Link>
 
               <Link
                 to="/companies"
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
                   isCompaniesActive
-                    ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                    : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
                 }`}
               >
-                <Building2 className="w-4 h-4" />
+                <Building2 className="w-4 h-4 text-emerald-800" />
                 Companies
               </Link>
 
@@ -92,25 +94,37 @@ export const Navbar = () => {
                 <>
                   <Link
                     to="/dashboard"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
                       isDashboardActive
-                        ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                        : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
                     }`}
                   >
-                    <LayoutDashboard className="w-4 h-4" />
+                    <LayoutDashboard className="w-4 h-4 text-emerald-800" />
                     Dashboard
                   </Link>
 
                   <Link
-                    to={roleDashboardPath}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
-                      isPortalActive
-                        ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    to="/reports"
+                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
+                      isReportsActive
+                        ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                        : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
                     }`}
                   >
-                    <User className="w-4 h-4" />
+                    <BarChart3 className="w-4 h-4 text-emerald-800" />
+                    Reports
+                  </Link>
+
+                  <Link
+                    to={roleDashboardPath}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
+                      isPortalActive
+                        ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                        : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
+                    }`}
+                  >
+                    <User className="w-4 h-4 text-emerald-800" />
                     {user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Profile'}
                   </Link>
                 </>
@@ -127,7 +141,7 @@ export const Navbar = () => {
                   to="/dashboard"
                   className="hidden sm:flex items-center gap-2.5 py-1 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 transition-colors border border-slate-200"
                 >
-                  <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                  <div className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                     {user?.fullName?.charAt(0) || 'U'}
                   </div>
                   <div className="text-left text-xs leading-tight">
@@ -162,7 +176,7 @@ export const Navbar = () => {
                 {location.pathname !== '/login' && (
                   <Link
                     to="/login"
-                    className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-100 transition-colors"
+                    className="px-3.5 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-800 hover:bg-slate-100 transition-colors"
                   >
                     Sign In
                   </Link>
@@ -170,7 +184,7 @@ export const Navbar = () => {
                 {location.pathname !== '/register' && (
                   <Link
                     to="/register"
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm shadow-indigo-200 hover:shadow-indigo-300 transition-all"
+                    className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-bold text-white bg-emerald-800 hover:bg-emerald-900 shadow-sm shadow-emerald-900/20 transition-all"
                   >
                     <span>Register</span>
                     <ChevronRight className="w-4 h-4" />
@@ -203,7 +217,7 @@ export const Navbar = () => {
         <div className="md:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 pt-3 pb-6 space-y-4 shadow-lg animate-fadeIn">
           {isAuthenticated && (
             <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold text-sm shadow-xs">
                 {user?.fullName?.charAt(0) || 'U'}
               </div>
               <div className="flex-1 min-w-0">
@@ -224,25 +238,25 @@ export const Navbar = () => {
           <nav className="space-y-1">
             <Link
               to="/jobs"
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                 isJobsActive
-                  ? 'bg-indigo-50 text-indigo-700 font-bold'
+                  ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
                   : 'text-slate-700 hover:bg-slate-50'
               }`}
             >
-              <Briefcase className="w-4 h-4 text-indigo-600" />
+              <Briefcase className="w-4 h-4 text-emerald-800" />
               <span>Jobs Directory</span>
             </Link>
 
             <Link
               to="/companies"
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                 isCompaniesActive
-                  ? 'bg-indigo-50 text-indigo-700 font-bold'
+                  ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
                   : 'text-slate-700 hover:bg-slate-50'
               }`}
             >
-              <Building2 className="w-4 h-4 text-indigo-600" />
+              <Building2 className="w-4 h-4 text-emerald-800" />
               <span>Verified Companies</span>
             </Link>
 
@@ -250,25 +264,37 @@ export const Navbar = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                     isDashboardActive
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
+                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <LayoutDashboard className="w-4 h-4 text-indigo-600" />
+                  <LayoutDashboard className="w-4 h-4 text-emerald-800" />
                   <span>Master Dashboard</span>
                 </Link>
 
                 <Link
-                  to={roleDashboardPath}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    isPortalActive
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
+                  to="/reports"
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                    isReportsActive
+                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <User className="w-4 h-4 text-indigo-600" />
+                  <BarChart3 className="w-4 h-4 text-emerald-800" />
+                  <span>Reports & Analytics</span>
+                </Link>
+
+                <Link
+                  to={roleDashboardPath}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                    isPortalActive
+                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <User className="w-4 h-4 text-emerald-800" />
                   <span>{user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Profile'}</span>
                 </Link>
               </>
@@ -295,7 +321,7 @@ export const Navbar = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="py-2.5 px-4 rounded-xl text-sm font-semibold text-center text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors"
+                  className="py-2.5 px-4 rounded-xl text-sm font-bold text-center text-white bg-emerald-800 hover:bg-emerald-900 shadow-sm transition-colors"
                 >
                   Register
                 </Link>

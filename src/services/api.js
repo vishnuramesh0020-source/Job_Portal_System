@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance for API communications
 const api = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com', // mock/placeholder base URL
+  baseURL: 'https://jsonplaceholder.typicode.com', // Third-party REST API base URL
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

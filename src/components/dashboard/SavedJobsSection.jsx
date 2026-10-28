@@ -29,7 +29,7 @@ export const SavedJobsSection = ({
           <button
             type="button"
             onClick={onBrowseJobs}
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors whitespace-nowrap cursor-pointer"
+            className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 transition-colors whitespace-nowrap cursor-pointer"
           >
             Explore More →
           </button>
@@ -49,7 +49,7 @@ export const SavedJobsSection = ({
             <button
               type="button"
               onClick={onBrowseJobs}
-              className="mt-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-xs hover:bg-indigo-700 transition-colors cursor-pointer"
+              className="mt-2 px-4 py-2 rounded-xl bg-emerald-800 text-white text-xs font-semibold shadow-xs hover:bg-emerald-900 transition-colors cursor-pointer"
             >
               Browse Open Positions
             </button>
@@ -61,12 +61,12 @@ export const SavedJobsSection = ({
           {savedJobs.slice(0, 4).map((job) => (
             <div
               key={job.id}
-              className="p-4 rounded-2xl border border-slate-200 hover:border-indigo-200 bg-white hover:shadow-xs transition-all flex flex-col justify-between group"
+              className="p-4 rounded-2xl border border-slate-200 hover:border-emerald-200 bg-white hover:shadow-xs transition-all flex flex-col justify-between group"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">
                       {job.category || 'Engineering'}
                     </span>
                     <span className="text-[11px] font-medium text-slate-500">
@@ -76,7 +76,7 @@ export const SavedJobsSection = ({
 
                   <Link
                     to={`/jobs/${job.id}`}
-                    className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors line-clamp-1 block"
+                    className="text-sm font-bold text-slate-900 hover:text-emerald-800 transition-colors line-clamp-1 block"
                   >
                     {job.title}
                   </Link>
@@ -114,7 +114,7 @@ export const SavedJobsSection = ({
                 <button
                   type="button"
                   onClick={() => onApplyJob(job)}
-                  className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0"
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:bg-emerald-950 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0"
                 >
                   <span>Apply Now</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -127,7 +127,7 @@ export const SavedJobsSection = ({
             <button
               type="button"
               onClick={onBrowseJobs}
-              className="w-full py-2.5 rounded-xl border border-dashed border-slate-200 hover:border-indigo-300 text-xs font-semibold text-indigo-600 hover:bg-indigo-50/50 transition-colors text-center cursor-pointer"
+              className="w-full py-2.5 rounded-xl border border-dashed border-slate-200 hover:border-emerald-300 text-xs font-semibold text-emerald-800 hover:bg-emerald-50/50 transition-colors text-center cursor-pointer"
             >
               View all {savedJobs.length} saved jobs →
             </button>
@@ -139,11 +139,11 @@ export const SavedJobsSection = ({
           {savedJobs.map((job) => (
             <div
               key={job.id}
-              className="p-5 rounded-2xl border border-slate-200 hover:border-indigo-200 bg-white hover:shadow-md transition-all flex flex-col justify-between group"
+              className="p-5 rounded-2xl border border-slate-200 hover:border-emerald-200 bg-white hover:shadow-md transition-all flex flex-col justify-between group"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">
                     {job.category || 'Engineering'}
                   </span>
                   <button
@@ -159,7 +159,7 @@ export const SavedJobsSection = ({
                 <div>
                   <Link
                     to={`/jobs/${job.id}`}
-                    className="text-base font-bold text-slate-900 hover:text-indigo-600 transition-colors line-clamp-1 block"
+                    className="text-base font-bold text-slate-900 hover:text-emerald-800 transition-colors line-clamp-1 block"
                   >
                     {job.title}
                   </Link>
@@ -188,7 +188,7 @@ export const SavedJobsSection = ({
                 <button
                   type="button"
                   onClick={() => onApplyJob(job)}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:bg-emerald-950 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <span>Apply Now</span>
                   <ArrowRight className="w-3.5 h-3.5" />

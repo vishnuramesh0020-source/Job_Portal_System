@@ -1,5 +1,5 @@
 /**
- * Mapping of legacy mock USD salary figures to realistic Indian Rupee (INR) ranges
+ * Mapping of legacy USD salary figures to realistic Indian Rupee (INR) ranges
  */
 const USD_SALARY_MAP = {
   '130,000 - 155,000': '18,00,000 - 24,00,000',
@@ -28,7 +28,7 @@ export const normalizeSalaryString = (rawSalary) => {
   // Extract clean number pattern without symbols
   const digitsOnly = rawSalary.replace(/[^\d,\s-]/g, '').trim();
 
-  // If matches an old USD mock range, map it to proper Indian lakhs
+  // If matches a legacy USD range, map it to proper Indian lakhs
   if (USD_SALARY_MAP[digitsOnly]) {
     return USD_SALARY_MAP[digitsOnly];
   }

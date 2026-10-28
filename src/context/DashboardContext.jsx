@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { DashboardContext } from './dashboardContextInstance';
 import { dashboardService } from '../services/dashboardService';
 import { toast } from 'react-toastify';
@@ -7,15 +7,28 @@ export const DashboardProvider = ({ children }) => {
   const [data, setData] = useState(() => dashboardService.getDashboardData());
   const [loading, setLoading] = useState(false);
 
-  // Refresh dashboard metrics from localStorage
-  const refreshData = useCallback(() => {
+  // Refresh dashboard metrics from third-party API & storage
+  const refreshData = useCallback(async () => {
     setLoading(true);
-    const updated = dashboardService.getDashboardData();
+    const updated = await dashboardService.getDashboardDataAsync();
     setData(updated);
     setLoading(false);
   }, []);
 
-  // Toggle Save Job
+  // Hydrate third-party API metrics on initial mount
+  useEffect(() => {
+    let isMounted = true;
+    dashboardService.getDashboardDataAsync().then((updated) => {
+      if (isMounted) {
+        setData(updated);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Toggle Save Job with third-party API sync
   const toggleSaveJob = useCallback((jobId, jobTitle) => {
     const res = dashboardService.toggleSaveJob(jobId, jobTitle);
     refreshData();
@@ -27,7 +40,7 @@ export const DashboardProvider = ({ children }) => {
     return res;
   }, [refreshData]);
 
-  // Quick Post Job
+  // Quick Post Job with third-party API sync
   const postNewJob = useCallback((jobData) => {
     try {
       const created = dashboardService.postNewJob(jobData);
@@ -40,7 +53,7 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [refreshData]);
 
-  // Quick Apply to Job
+  // Quick Apply to Job with third-party API sync
   const applyToJob = useCallback((jobId, applicantData) => {
     try {
       const app = dashboardService.applyToJob(jobId, applicantData);
@@ -53,7 +66,7 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [refreshData]);
 
-  // Withdraw Application (Candidate Action)
+  // Withdraw Application with third-party API sync
   const withdrawApplication = useCallback((applicationId, reason) => {
     try {
       const updated = dashboardService.withdrawApplication(applicationId, reason);
@@ -66,7 +79,7 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [refreshData]);
 
-  // Reset to initial mock data
+  // Reset to initial API defaults
   const resetToDefaults = useCallback(() => {
     const defaults = dashboardService.resetToDefaults();
     setData(defaults);

@@ -24,9 +24,9 @@ export const QuickActionCards = ({
       title: 'Post a New Job',
       description: 'Create an active listing to recruit qualified candidates.',
       icon: PlusCircle,
-      gradient: 'from-indigo-600 to-indigo-700',
+      gradient: 'from-[#0A2B1A] to-emerald-800',
       badge: 'Recruiter Action',
-      badgeStyle: 'bg-indigo-50 text-indigo-700',
+      badgeStyle: 'bg-emerald-50 text-emerald-800',
       buttonText: 'Post Job Listing',
       highlight: role === 'recruiter',
       onClick: onOpenPostJob,
@@ -94,7 +94,7 @@ export const QuickActionCards = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-600" />
+            <Sparkles className="w-5 h-5 text-emerald-800" />
             Quick Action Cards
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -111,7 +111,7 @@ export const QuickActionCards = ({
               key={act.id}
               className={`bg-white rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group ${
                 act.highlight
-                  ? 'border-indigo-300 ring-2 ring-indigo-500/10'
+                  ? 'border-emerald-300 ring-2 ring-emerald-800/10'
                   : 'border-slate-200'
               }`}
             >
@@ -130,7 +130,7 @@ export const QuickActionCards = ({
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition-colors">
+                  <h3 className="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">
                     {act.title}
                   </h3>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -143,7 +143,7 @@ export const QuickActionCards = ({
                 <button
                   type="button"
                   onClick={act.onClick}
-                  className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 hover:border-emerald-200 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <span>{act.buttonText}</span>
                   <ArrowRight className="w-3.5 h-3.5" />

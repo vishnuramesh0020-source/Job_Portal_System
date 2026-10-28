@@ -9,7 +9,7 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
+        <Loader2 className="w-10 h-10 text-emerald-800 animate-spin mb-4" />
         <p className="text-slate-500 font-medium">Checking authentication status...</p>
       </div>
     );

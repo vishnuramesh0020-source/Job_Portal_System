@@ -102,7 +102,7 @@ export const CompanyDetails = () => {
   if (loading) {
     return (
       <div className="w-full px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+        <Loader2 className="w-10 h-10 text-emerald-800 animate-spin" />
         <p className="text-sm font-semibold text-slate-500">Loading company profile...</p>
       </div>
     );
@@ -118,7 +118,7 @@ export const CompanyDetails = () => {
         <p className="text-sm text-slate-500">{error || 'The requested company does not exist.'}</p>
         <Link
           to="/companies"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs shadow-md transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Companies Directory
@@ -133,7 +133,7 @@ export const CompanyDetails = () => {
       <div>
         <Link
           to="/companies"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-emerald-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to All Companies
@@ -141,9 +141,9 @@ export const CompanyDetails = () => {
       </div>
 
       {/* Hero Header Banner */}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Cover Strip */}
-        <div className="h-44 sm:h-52 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative">
+        <div className="h-44 sm:h-52 bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 relative">
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <button
               type="button"
@@ -164,53 +164,34 @@ export const CompanyDetails = () => {
           </div>
         </div>
 
-        {/* Profile Info Overlay */}
+        {/* Profile Info Section */}
         <div className="px-6 sm:px-8 pb-8 pt-0 relative">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-14 sm:-mt-16 mb-6">
-            <div className="flex items-end gap-4">
-              {/* Logo Box */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white p-1 border-4 border-white shadow-xl overflow-hidden shrink-0">
-                {company.logo && !imageError ? (
-                  <img
-                    src={company.logo}
-                    alt={company.name}
-                    onError={() => setImageError(true)}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-violet-700 text-white font-black text-2xl flex items-center justify-center rounded-xl">
-                    {company.logoText || company.name.substring(0, 2).toUpperCase()}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                    {company.name}
-                  </h1>
-                  <CheckCircle2 className="w-5 h-5 text-indigo-600 fill-indigo-100" />
+          {/* Logo & Action Buttons Header Row */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
+            {/* Logo Box - overlapping banner smoothly */}
+            <div className="-mt-14 sm:-mt-16 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white p-1 border-4 border-white shadow-xl overflow-hidden shrink-0">
+              {company.logo && !imageError ? (
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  onError={() => setImageError(true)}
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-emerald-700 to-teal-800 text-white font-black text-2xl flex items-center justify-center rounded-xl">
+                  {company.logoText || company.name.substring(0, 2).toUpperCase()}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">
-                    {company.industry}
-                  </span>
-                  <span className="text-xs text-slate-500 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    {company.location}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* External Links */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 sm:pt-0">
+            <div className="flex flex-wrap items-center gap-2.5">
               {company.website && (
                 <a
                   href={company.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:border-indigo-600 hover:text-indigo-600 transition-colors shadow-sm"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:border-emerald-700 hover:text-emerald-800 transition-colors shadow-xs bg-white"
                 >
                   <Globe className="w-4 h-4 text-slate-400" />
                   <span>Website</span>
@@ -221,7 +202,7 @@ export const CompanyDetails = () => {
               {company.contactEmail && (
                 <a
                   href={`mailto:${company.contactEmail}`}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-100 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-xs transition-colors"
                 >
                   <Mail className="w-4 h-4" />
                   <span>Contact Recruiter</span>
@@ -230,35 +211,60 @@ export const CompanyDetails = () => {
             </div>
           </div>
 
+          {/* Company Name, Verified Checkmark & Badges (Positioned cleanly on white background) */}
+          <div className="space-y-1.5 mb-6">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#0A2B1A] tracking-tight">
+                {company.name}
+              </h1>
+              <CheckCircle2 className="w-5 h-5 text-emerald-700 fill-emerald-100 shrink-0" />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider">
+                {company.industry}
+              </span>
+              <span className="text-xs text-slate-500 flex items-center gap-1 font-medium">
+                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                {company.location}
+              </span>
+              {company.foundedYear && (
+                <span className="text-xs text-slate-400 font-medium">
+                  • Founded {company.foundedYear}
+                </span>
+              )}
+            </div>
+          </div>
+
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y border-slate-100 text-xs">
             <div className="space-y-0.5">
               <span className="text-slate-400 font-medium">Headquarters</span>
-              <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <p className="font-bold text-[#0A2B1A] flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                 {company.location}
               </p>
             </div>
 
             <div className="space-y-0.5">
               <span className="text-slate-400 font-medium">Company Size</span>
-              <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <p className="font-bold text-[#0A2B1A] flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 {company.employees}
               </p>
             </div>
 
             <div className="space-y-0.5">
               <span className="text-slate-400 font-medium">Industry Focus</span>
-              <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <p className="font-bold text-[#0A2B1A] flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-emerald-800 shrink-0" />
                 {company.industry}
               </p>
             </div>
 
             <div className="space-y-0.5">
               <span className="text-slate-400 font-medium">Active Openings</span>
-              <p className="font-bold text-emerald-600 flex items-center gap-1.5">
+              <p className="font-bold text-emerald-700 flex items-center gap-1.5">
                 <Briefcase className="w-3.5 h-3.5 shrink-0" />
                 {companyJobs.length} Positions Available
               </p>
@@ -267,7 +273,7 @@ export const CompanyDetails = () => {
 
           {/* About / Company Description */}
           <div className="mt-6 space-y-2">
-            <h3 className="text-base font-bold text-slate-900">About {company.name}</h3>
+            <h3 className="text-base font-bold text-[#0A2B1A]">About {company.name}</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-4xl">
               {company.description}
             </p>
@@ -279,8 +285,8 @@ export const CompanyDetails = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-xl font-bold text-[#0A2B1A] flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-emerald-800" />
               Active Job Openings at {company.name} ({companyJobs.length})
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -306,11 +312,11 @@ export const CompanyDetails = () => {
               return (
                 <div
                   key={job.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-100">
                         {job.category}
                       </span>
                       <button
@@ -330,13 +336,13 @@ export const CompanyDetails = () => {
                     <div>
                       <Link
                         to={`/jobs/${job.id}`}
-                        className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors line-clamp-1 block"
+                        className="text-sm font-bold text-[#0A2B1A] hover:text-emerald-700 transition-colors line-clamp-1 block"
                       >
                         {job.title}
                       </Link>
-                      <p className="text-xs font-semibold text-emerald-600 mt-1 flex items-center gap-1">
+                      <p className="text-xs font-bold text-emerald-800 mt-1 flex items-center gap-1">
                         <IndianRupee className="w-3.5 h-3.5 shrink-0" />
-                        <span>{formatSalaryNumber(job.salary)}</span>
+                        <span>{formatSalaryNumber(job.salaryRange || job.salary)}</span>
                       </p>
                     </div>
 
@@ -355,7 +361,7 @@ export const CompanyDetails = () => {
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                     <Link
                       to={`/jobs/${job.id}`}
-                      className="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                      className="text-xs font-semibold text-slate-600 hover:text-emerald-800 transition-colors flex items-center gap-1"
                     >
                       <span>Details</span>
                       <ArrowRight className="w-3 h-3" />
@@ -363,7 +369,7 @@ export const CompanyDetails = () => {
                     <button
                       type="button"
                       onClick={() => handleOpenApply(job)}
-                      className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1 cursor-pointer"
                     >
                       <span>Apply</span>
                       <Send className="w-3 h-3" />

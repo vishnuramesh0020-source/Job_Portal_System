@@ -18,6 +18,7 @@ import CompaniesList from './pages/companies/CompaniesList';
 import CompanyDetails from './pages/companies/CompanyDetails';
 import JobsList from './pages/jobs/JobsList';
 import JobDetails from './pages/jobs/JobDetails';
+import Reports from './pages/reports/Reports';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -50,6 +51,16 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Platform Reports & Analytics */}
+                <Route
+                  path="/reports"
+                  element={
+                    <ProtectedRoute>
+                      <Reports />
                     </ProtectedRoute>
                   }
                 />

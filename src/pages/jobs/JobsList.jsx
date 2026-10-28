@@ -66,6 +66,10 @@ export const JobsList = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [sortBy, setSortBy] = useState('newest'); // Sort by Latest Jobs (Default)
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+
   // Sync state if URL query params change (e.g. from Hero search/tag click)
   const [prevUrlParams, setPrevUrlParams] = useState({
     q: currentQ,
@@ -96,10 +100,6 @@ export const JobsList = () => {
     setSelectedSalary(currentSal);
     setCurrentPage(1);
   }
-
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
 
   // Modal states
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -370,23 +370,23 @@ export const JobsList = () => {
   return (
     <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* Top Banner Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0A2B1A] via-[#0F3822] to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               Explore & Discover Job Openings
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+            <p className="text-emerald-100 text-xs sm:text-sm max-w-2xl leading-relaxed">
               Find your next role with advanced multi-criteria filtering by Location, Job Type, Experience Level, and Salary Range in Indian Rupees (₹).
             </p>
 
             {/* Quick Metrics Pills */}
             <div className="flex flex-wrap items-center gap-2.5 pt-2 text-xs">
               <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-white font-medium">
-                Total Jobs: <strong className="text-indigo-300">{jobs.length}</strong>
+                Total Jobs: <strong className="text-emerald-200">{jobs.length}</strong>
               </span>
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 font-medium">
-                Open Positions: <strong className="text-emerald-200">{totalOpenCount}</strong>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 font-medium">
+                Open Positions: <strong className="text-emerald-100">{totalOpenCount}</strong>
               </span>
               <span className="px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 font-medium">
                 Closed: <strong className="text-rose-200">{totalClosedCount}</strong>
@@ -398,7 +398,7 @@ export const JobsList = () => {
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-900/30 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Post a Job</span>
@@ -422,7 +422,7 @@ export const JobsList = () => {
                 setCurrentPage(1);
               }}
               placeholder="Search jobs by title, skills (e.g. React, Python), company, or keywords..."
-              className="w-full pl-10 pr-8 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white placeholder-slate-400 transition-all"
+              className="w-full pl-10 pr-8 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white placeholder-slate-400 transition-all"
             />
             {searchQuery && (
               <button
@@ -448,7 +448,7 @@ export const JobsList = () => {
                 setSortBy(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-semibold"
+              className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-semibold"
             >
               <option value="newest">Latest Jobs (Newest First)</option>
               <option value="oldest">Oldest Jobs First</option>
@@ -474,9 +474,9 @@ export const JobsList = () => {
               setSelectedLocation('all');
               setCurrentPage(1);
             }}
-            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
               selectedLocation === 'all'
-                ? 'bg-indigo-600 text-white border-indigo-600'
+                ? 'bg-emerald-800 text-white border-emerald-800'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
             }`}
           >
@@ -492,9 +492,9 @@ export const JobsList = () => {
                   setSelectedLocation(isSelected ? 'all' : loc);
                   setCurrentPage(1);
                 }}
-                className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
                   isSelected
-                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    ? 'bg-emerald-800 text-white border-emerald-800'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
@@ -509,7 +509,7 @@ export const JobsList = () => {
           {/* 1. Filter by Location */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-indigo-500" />
+              <MapPin className="w-3 h-3 text-emerald-700" />
               Location
             </label>
             <select
@@ -518,7 +518,7 @@ export const JobsList = () => {
                 setSelectedLocation(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               <option value="all">All Locations</option>
               <option value="Remote">Remote</option>
@@ -535,7 +535,7 @@ export const JobsList = () => {
           {/* 2. Filter by Job Type */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <Briefcase className="w-3 h-3 text-indigo-500" />
+              <Briefcase className="w-3 h-3 text-emerald-700" />
               Job Type
             </label>
             <select
@@ -544,7 +544,7 @@ export const JobsList = () => {
                 setSelectedType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               <option value="all">All Job Types</option>
               {EMPLOYMENT_TYPES.map((t) => (
@@ -558,7 +558,7 @@ export const JobsList = () => {
           {/* 3. Filter by Experience Level */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <SlidersHorizontal className="w-3 h-3 text-indigo-500" />
+              <SlidersHorizontal className="w-3 h-3 text-emerald-700" />
               Experience
             </label>
             <select
@@ -567,7 +567,7 @@ export const JobsList = () => {
                 setSelectedLevel(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               <option value="all">All Levels</option>
               {EXPERIENCE_LEVELS.map((lvl) => (
@@ -581,7 +581,7 @@ export const JobsList = () => {
           {/* 4. Filter by Salary Range (INR) */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <IndianRupee className="w-3 h-3 text-emerald-600" />
+              <IndianRupee className="w-3 h-3 text-emerald-700" />
               Salary Range
             </label>
             <select
@@ -590,7 +590,7 @@ export const JobsList = () => {
                 setSelectedSalary(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               {SALARY_FILTER_OPTIONS.map((opt) => (
                 <option key={opt.id} value={opt.id}>
@@ -603,7 +603,7 @@ export const JobsList = () => {
           {/* 5. Filter by Work Mode (Remote / Hybrid / On-site) */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <Layers className="w-3 h-3 text-indigo-500" />
+              <Layers className="w-3 h-3 text-emerald-700" />
               Work Mode
             </label>
             <select
@@ -612,7 +612,7 @@ export const JobsList = () => {
                 setSelectedLocationType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               <option value="all">All Work Modes</option>
               {LOCATION_TYPES.map((lt) => (
@@ -626,7 +626,7 @@ export const JobsList = () => {
           {/* 6. Filter by Category */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-              <Briefcase className="w-3 h-3 text-indigo-500" />
+              <Briefcase className="w-3 h-3 text-emerald-700" />
               Category
             </label>
             <select
@@ -635,7 +635,7 @@ export const JobsList = () => {
                 setSelectedCategory(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+              className="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
             >
               <option value="all">All Categories</option>
               {JOB_CATEGORIES.map((cat) => (
@@ -651,7 +651,7 @@ export const JobsList = () => {
         <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-slate-700">
-              Found <strong className="text-indigo-600 font-bold">{totalItems}</strong> matching jobs
+              Found <strong className="text-emerald-800 font-bold">{totalItems}</strong> matching jobs
             </span>
 
             {hasActiveFilters && (
@@ -673,7 +673,7 @@ export const JobsList = () => {
                 )}
 
                 {selectedLocation !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-medium">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-medium">
                     Location: {selectedLocation}
                     <button
                       type="button"
@@ -771,7 +771,7 @@ export const JobsList = () => {
               <button
                 type="button"
                 onClick={handleClearFilters}
-                className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs text-emerald-800 hover:text-emerald-950 font-bold transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reset All Filters</span>
@@ -787,7 +787,7 @@ export const JobsList = () => {
                   setItemsPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white text-slate-700"
+                className="px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-800 bg-white text-slate-700"
               >
                 <option value={6}>6 / page</option>
                 <option value={9}>9 / page</option>
@@ -827,7 +827,7 @@ export const JobsList = () => {
       ) : paginatedJobs.length === 0 ? (
         /* EMPTY SEARCH STATE */
         <div className="py-16 text-center bg-white rounded-3xl border border-dashed border-slate-200 p-8 space-y-4 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center mx-auto">
             <Search className="w-8 h-8" />
           </div>
           <h3 className="text-lg font-bold text-slate-900">No Job Openings Matched Your Search</h3>
@@ -838,14 +838,14 @@ export const JobsList = () => {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-semibold text-xs hover:bg-indigo-100 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-800 font-semibold text-xs hover:bg-emerald-100 transition-colors cursor-pointer border border-emerald-200/60"
             >
               Clear All Filters
             </button>
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-emerald-800 text-white font-semibold text-xs hover:bg-emerald-900 transition-colors cursor-pointer"
             >
               Post a New Job
             </button>
@@ -881,7 +881,7 @@ export const JobsList = () => {
             <strong className="text-slate-800">
               {Math.min(startIndex + itemsPerPage, totalItems)}
             </strong>{' '}
-            of <strong className="text-indigo-600 font-bold">{totalItems}</strong> job postings
+            of <strong className="text-emerald-800 font-bold">{totalItems}</strong> job postings
           </span>
 
           <div className="flex items-center gap-1.5">
@@ -910,7 +910,7 @@ export const JobsList = () => {
                 }}
                 className={`w-8 h-8 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                   currentPage === pageNum
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-emerald-800 text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-100 border border-transparent'
                 }`}
               >

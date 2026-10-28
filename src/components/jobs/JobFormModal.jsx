@@ -107,7 +107,7 @@ const JobFormModalContent = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-800 text-white flex items-center justify-center shadow-lg shadow-emerald-950/20">
             <Briefcase className="w-6 h-6" />
           </div>
           <div>
@@ -138,7 +138,7 @@ const JobFormModalContent = ({
                 className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                   errors.title
                     ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                    : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                 }`}
                 {...register('title', {
                   required: 'Job title is required',
@@ -167,7 +167,7 @@ const JobFormModalContent = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.company
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('company', { required: 'Company name is required' })}
                 />
@@ -183,7 +183,7 @@ const JobFormModalContent = ({
               </label>
               <div className="relative">
                 <select
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                   {...register('category', { required: 'Category is required' })}
                 >
                   {JOB_CATEGORIES.map((cat) => (
@@ -203,7 +203,7 @@ const JobFormModalContent = ({
                 Employment Type *
               </label>
               <select
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('employmentType')}
               >
                 {EMPLOYMENT_TYPES.map((type) => (
@@ -219,7 +219,7 @@ const JobFormModalContent = ({
                 Experience Level *
               </label>
               <select
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('experienceLevel')}
               >
                 {EXPERIENCE_LEVELS.map((exp) => (
@@ -247,7 +247,7 @@ const JobFormModalContent = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.salaryRange
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('salaryRange', { required: 'Salary range is required' })}
                 />
@@ -271,7 +271,7 @@ const JobFormModalContent = ({
                   className={`w-full pl-10 pr-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.location
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('location', { required: 'Location is required' })}
                 />
@@ -289,7 +289,7 @@ const JobFormModalContent = ({
                 Workplace Type
               </label>
               <select
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('locationType')}
               >
                 {LOCATION_TYPES.map((lt) => (
@@ -310,7 +310,7 @@ const JobFormModalContent = ({
                   className={`w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                     errors.deadline
                       ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                      : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
                   }`}
                   {...register('deadline', { required: 'Application deadline is required' })}
                 />
@@ -345,7 +345,7 @@ const JobFormModalContent = ({
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
             <div className="flex items-center justify-between">
               <label className="font-semibold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                <Sparkles className="w-3.5 h-3.5 text-emerald-800" />
                 Required Skills & Technologies *
               </label>
               <span className="text-[11px] text-slate-400">
@@ -361,12 +361,12 @@ const JobFormModalContent = ({
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={handleKeyDownSkill}
                 placeholder="Type skill & press Enter (e.g. React, TypeScript, Docker)..."
-                className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
               />
               <button
                 type="button"
                 onClick={() => handleAddSkill()}
-                className="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1 cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add
@@ -378,7 +378,7 @@ const JobFormModalContent = ({
               {skillsList.map((skill) => (
                 <span
                   key={skill}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-indigo-700 border border-indigo-200 shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-emerald-800 border border-emerald-200 shadow-sm"
                 >
                   <span>{skill}</span>
                   <button
@@ -404,7 +404,7 @@ const JobFormModalContent = ({
                   className={`px-2 py-0.5 rounded-md border text-[11px] transition-colors ${
                     skillsList.includes(ps)
                       ? 'bg-slate-200 text-slate-400 border-transparent cursor-not-allowed'
-                      : 'bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border-slate-200 cursor-pointer'
+                      : 'bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-800 border-slate-200 cursor-pointer'
                   }`}
                 >
                   +{ps}
@@ -424,7 +424,7 @@ const JobFormModalContent = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                 errors.description
                   ? 'border-rose-300 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-slate-300 focus:ring-indigo-100 focus:border-indigo-600 bg-white'
+                  : 'border-slate-300 focus:ring-emerald-100 focus:border-emerald-800 bg-white'
               }`}
               {...register('description', {
                 required: 'Job description is required',
@@ -445,7 +445,7 @@ const JobFormModalContent = ({
               <textarea
                 rows={2}
                 placeholder="Key qualifications, degree or equivalent experience..."
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('requirements')}
               />
             </div>
@@ -457,7 +457,7 @@ const JobFormModalContent = ({
               <textarea
                 rows={2}
                 placeholder="Daily deliverables, sprint milestones, and team deliverables..."
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white"
                 {...register('responsibilities')}
               />
             </div>
@@ -475,7 +475,7 @@ const JobFormModalContent = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-70 text-white font-semibold shadow-md shadow-indigo-100 transition-all flex items-center gap-2 cursor-pointer text-xs"
+              className="px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:bg-emerald-950 disabled:opacity-70 text-white font-semibold shadow-md shadow-emerald-950/20 transition-all flex items-center gap-2 cursor-pointer text-xs"
             >
               {isSubmitting ? (
                 <>

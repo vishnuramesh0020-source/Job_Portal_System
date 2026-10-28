@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import { Link } from 'react-router-dom';
 import JobFormModal from '../../components/jobs/JobFormModal';
+import { formatSalaryWithSymbol } from '../../utils/formatSalary';
 import {
   Building2,
   Mail,
@@ -15,7 +16,9 @@ import {
   LogOut,
   ShieldCheck,
   FileText,
-  Sparkles,
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 export const RecruiterDashboard = () => {
@@ -25,51 +28,60 @@ export const RecruiterDashboard = () => {
     activeJobPostings,
     totalCandidates,
     totalApplications,
-    activeJobs,
+    activeJobs = [],
     postNewJob,
   } = useDashboard();
 
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
+  // Pagination for Active Job Postings: show only 4 in front
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
+  const totalPages = Math.ceil(activeJobs.length / ITEMS_PER_PAGE) || 1;
+  const validPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+  const paginatedJobs = activeJobs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   // Recruiter stats overview
   const stats = [
-    { label: 'Platform Jobs', value: totalJobs, icon: Briefcase, color: 'text-indigo-600 bg-indigo-50' },
-    { label: 'Active Postings', value: activeJobPostings, icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
-    { label: 'Total Candidates', value: totalCandidates, icon: Users, color: 'text-purple-600 bg-purple-50' },
-    { label: 'Total Applications', value: totalApplications, icon: FileText, color: 'text-blue-600 bg-blue-50' },
+    { label: 'Platform Jobs', value: totalJobs, icon: Briefcase, color: 'text-emerald-700 bg-emerald-50' },
+    { label: 'Active Postings', value: activeJobPostings, icon: CheckCircle2, color: 'text-teal-700 bg-teal-50' },
+    { label: 'Total Candidates', value: totalCandidates, icon: Users, color: 'text-purple-700 bg-purple-50' },
+    { label: 'Total Applications', value: totalApplications, icon: FileText, color: 'text-blue-700 bg-blue-50' },
   ];
 
   return (
     <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-900/20 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide uppercase border border-indigo-500/30">
-              <ShieldCheck className="w-4 h-4 text-indigo-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-emerald-200 text-xs font-semibold tracking-wide uppercase border border-white/20">
+              <ShieldCheck className="w-4 h-4 text-emerald-300" />
               Recruiter & Employer Portal
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               {user?.companyName || 'Recruiter Workspace'}
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
+            <p className="text-emerald-100 text-xs sm:text-sm max-w-xl">
               Managed by <span className="text-white font-medium">{user?.fullName}</span>. Oversee your talent pipeline, review applicants, and publish new roles.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              to="/dashboard"
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-indigo-700 text-xs font-bold shadow-md hover:bg-indigo-50 transition-all"
+              to="/reports"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-emerald-950 text-xs font-bold shadow-md hover:bg-emerald-50 transition-all"
             >
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              Master Analytics
+              <BarChart3 className="w-4 h-4 text-emerald-700" />
+              Reports & Analytics
             </Link>
 
             <button
               type="button"
               onClick={() => setIsPostModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-900/30 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-md transition-all cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Post Job</span>
@@ -94,16 +106,16 @@ export const RecruiterDashboard = () => {
           return (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center gap-4"
+              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4"
             >
               <div className={`p-3 rounded-xl ${item.color}`}>
                 <Icon className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   {item.label}
                 </p>
-                <h3 className="text-2xl font-black text-slate-900">{item.value}</h3>
+                <h3 className="text-2xl font-black text-[#0A2B1A]">{item.value}</h3>
               </div>
             </div>
           );
@@ -111,121 +123,115 @@ export const RecruiterDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recruiter & Company Details Card (Stored in Local Storage) */}
+        {/* Recruiter & Company Details Card */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
             <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
-              <div className="w-16 h-16 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-amber-100">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-800 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-emerald-100">
                 <Building2 className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-lg leading-tight">
-                  {user?.companyName || 'Company Profile'}
+                <h3 className="font-extrabold text-[#0A2B1A] text-lg">
+                  {user?.companyName || 'Verified Employer'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">Recruiter: {user?.fullName}</p>
-                <span className="inline-block mt-1 text-[11px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 uppercase">
-                  {user?.role}
+                <p className="text-xs text-slate-500 font-medium">{user?.title || 'Talent Acquisition'}</p>
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 mt-1 border border-emerald-100">
+                  Verified Seat
                 </span>
               </div>
             </div>
 
-            {/* Profile fields read from Local Storage */}
-            <div className="py-4 space-y-3.5 text-xs text-slate-600">
+            <div className="space-y-4 pt-6 text-xs text-slate-600">
               <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="truncate font-medium text-slate-800">{user?.email}</span>
+                <Mail className="w-4 h-4 text-emerald-700" />
+                <span className="truncate">{user?.email}</span>
               </div>
-
-              {user?.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span className="font-medium text-slate-800">{user.phone}</span>
-                </div>
-              )}
-
-              {user?.companyWebsite && (
-                <div className="flex items-center gap-3">
-                  <Globe className="w-4 h-4 text-slate-400 shrink-0" />
-                  <a
-                    href={user.companyWebsite}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-indigo-600 hover:underline truncate"
-                  >
-                    {user.companyWebsite}
-                  </a>
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-emerald-700" />
+                <span>{user?.phone || '+1 (555) 019-2834'}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Globe className="w-4 h-4 text-emerald-700" />
+                <span className="truncate">{user?.companyWebsite || 'https://recruiter.company.com'}</span>
+              </div>
             </div>
 
-            {user?.bio && (
-              <div className="mt-2 pt-4 border-t border-slate-100">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  About Company
-                </label>
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  {user.bio}
-                </p>
-              </div>
-            )}
-
-            <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
-              <span className="font-mono">User ID: {user?.id}</span>
-              <Link to="/dashboard" className="text-indigo-600 hover:underline font-semibold">
+            <div className="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span className="text-slate-400">Master Analytics</span>
+              <Link to="/dashboard" className="font-bold text-emerald-800 hover:text-emerald-950">
                 Go to Dashboard →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Posted Jobs Section */}
+        {/* Posted Jobs Section: Showing only 4 in front with pagination */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Active Job Postings</h3>
+                <h3 className="font-extrabold text-[#0A2B1A] text-lg flex items-center gap-2">
+                  <span>Active Job Postings</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    {activeJobs.length} Live
+                  </span>
+                </h3>
                 <p className="text-xs text-slate-500">Live listings updated in local storage</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsPostModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-800 hover:bg-emerald-900 transition-colors shadow-xs cursor-pointer self-start sm:self-auto"
               >
                 <PlusCircle className="w-4 h-4" />
-                Post New Job
+                <span>Post New Job</span>
               </button>
             </div>
 
+            {/* List */}
             <div className="divide-y divide-slate-100">
               {activeJobs.length === 0 ? (
-                <div className="py-8 text-center text-xs text-slate-500">
-                  No active job postings yet. Click "Post New Job" above to create your first listing.
+                <div className="py-10 text-center text-xs text-slate-500 space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <p className="font-medium text-slate-600">No active job postings yet.</p>
+                  <p className="text-[11px] text-slate-400">Click &quot;Post New Job&quot; above to create your first listing.</p>
                 </div>
               ) : (
-                activeJobs.map((job) => (
+                paginatedJobs.map((job) => (
                   <div
                     key={job.id}
-                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-emerald-50/20 px-2 rounded-xl transition-colors"
                   >
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <Link
                         to={`/jobs/${job.id}`}
-                        className="font-bold text-slate-900 text-sm hover:text-indigo-600 transition-colors block"
+                        className="font-bold text-[#0A2B1A] text-sm hover:text-emerald-700 transition-colors block truncate"
                       >
                         {job.title}
                       </Link>
-                      <p className="text-xs text-slate-500">
-                        {job.company} • {job.category} • {job.location} • Posted {job.postedDate}
+                      <p className="text-xs text-slate-500 flex flex-wrap items-center gap-2">
+                        <span className="font-semibold text-slate-700">{job.company}</span>
+                        <span>•</span>
+                        <span>{job.category}</span>
+                        <span>•</span>
+                        <span>{job.location}</span>
+                        <span>•</span>
+                        <span className="font-bold text-emerald-800">{formatSalaryWithSymbol(job.salaryRange || job.salary)}</span>
+                        <span>•</span>
+                        <span className="text-slate-400">Posted {job.postedDate}</span>
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">
                         <Users className="w-3.5 h-3.5" />
                         {job.applicantsCount || 0} Applicants
                       </span>
                       <Link
                         to={`/jobs/${job.id}`}
-                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                        className="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition-colors"
                       >
                         View / Edit →
                       </Link>
@@ -234,6 +240,54 @@ export const RecruiterDashboard = () => {
                 ))
               )}
             </div>
+
+            {/* Pagination Controls (Showing only 4 in front) */}
+            {totalPages > 1 && (
+              <div className="pt-5 mt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <span className="text-xs text-slate-500">
+                  Showing <strong className="font-bold text-[#0A2B1A]">{startIndex + 1}</strong> to{' '}
+                  <strong className="font-bold text-[#0A2B1A]">{Math.min(startIndex + ITEMS_PER_PAGE, activeJobs.length)}</strong> of{' '}
+                  <strong className="font-bold text-[#0A2B1A]">{activeJobs.length}</strong> postings
+                </span>
+
+                <div className="flex items-center gap-1.5 self-center sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={validPage === 1}
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>Prev</span>
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        validPage === pageNum
+                          ? 'bg-emerald-800 text-white shadow-xs'
+                          : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    disabled={validPage === totalPages}
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <span>Next</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import api from './api';
-import { initialCompanies } from '../data/mockDashboardData';
 
 const COMPANIES_STORAGE_KEY = 'job_portal_companies';
 const ACTIVITIES_STORAGE_KEY = 'job_portal_recent_activities';
@@ -38,7 +37,7 @@ const defaultLogos = [
 ];
 
 // Map a JSONPlaceholder User into a complete Company Object
-const mapApiUserToCompany = (user, index) => {
+export const mapApiUserToCompany = (user, index) => {
   const industries = [
     'Technology',
     'Finance & FinTech',
@@ -52,7 +51,6 @@ const mapApiUserToCompany = (user, index) => {
   const industry = industries[index % industries.length];
   const empRanges = ['100-250 employees', '250-500 employees', '500-1000 employees', '1000+ employees'];
   const employees = empRanges[index % empRanges.length];
-
   const logo = defaultLogos[index % defaultLogos.length];
 
   return {
@@ -76,10 +74,10 @@ const mapApiUserToCompany = (user, index) => {
 const getStoredCompanies = () => {
   try {
     const raw = localStorage.getItem(COMPANIES_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.error('Error reading companies from storage:', e);
-    return null;
+    return [];
   }
 };
 
@@ -104,65 +102,57 @@ const logActivity = (activity) => {
 
 export const companyService = {
   // 1. Display Company List with Third-Party API Integration (Axios)
-  getCompanies: async (forceRefresh = false) => {
-    const localCompanies = getStoredCompanies();
-
-    // If we have cached/modified data in localStorage and not forcing a refresh, return immediately
-    if (localCompanies && localCompanies.length > 0 && !forceRefresh) {
-      return localCompanies;
-    }
-
+  getCompanies: async () => {
     try {
-      // Real network call to third-party API (JSONPlaceholder)
+      // Direct network call to third-party API (JSONPlaceholder)
       const response = await api.get('/users');
       const apiUsers = response.data || [];
 
       // Transform API users to full Company Schema
       const apiCompanies = apiUsers.map((user, idx) => mapApiUserToCompany(user, idx));
 
-      // Combine with our verified seed companies to preserve relations
-      const mergedMap = new Map();
-      initialCompanies.forEach((c) => {
-        mergedMap.set(c.id, {
-          ...c,
-          logo: c.logo || defaultLogos[0],
-          website: c.website || 'https://techcorp.example.com',
-          contactEmail: `contact@${c.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
-          employees: c.employees ? `${c.employees} employees` : '100-250 employees',
-          description: c.description || `${c.name} is a high-growth leader in ${c.industry}. Building next-generation digital products and hiring top-tier talent.`,
-          foundedYear: 2018,
-        });
-      });
+      // Overlay user additions / modifications stored in local cache
+      const stored = getStoredCompanies();
+      const userAdded = stored.filter((c) => !apiCompanies.some((ac) => String(ac.id) === String(c.id)));
+      const userModifiedMap = new Map();
+      stored.forEach((c) => userModifiedMap.set(String(c.id), c));
 
-      apiCompanies.forEach((ac) => {
-        mergedMap.set(ac.id, ac);
-      });
+      const merged = apiCompanies.map((ac) => userModifiedMap.get(String(ac.id)) || ac);
+      const combined = [...userAdded, ...merged];
 
-      const combined = Array.from(mergedMap.values());
       setStoredCompanies(combined);
       return combined;
     } catch (error) {
-      console.warn('API fetch failed, falling back to local storage or seed data:', error);
-      if (localCompanies && localCompanies.length > 0) {
-        return localCompanies;
-      }
-      return initialCompanies;
+      console.warn('API fetch failed, falling back to cache:', error);
+      return getStoredCompanies();
     }
   },
 
   // 2. Company Details Page
   getCompanyById: async (id) => {
     const companies = await companyService.getCompanies();
-    const company = companies.find((c) => String(c.id) === String(id));
+    let company = companies.find((c) => String(c.id) === String(id));
+
+    if (!company) {
+      const numericId = String(id).replace(/[^\d]/g, '') || '1';
+      try {
+        const res = await api.get(`/users/${numericId}`);
+        if (res.data) {
+          company = mapApiUserToCompany(res.data, parseInt(numericId, 10));
+        }
+      } catch (e) {
+        console.warn('Third-party API getCompanyById fallback:', e);
+      }
+    }
+
     if (!company) {
       throw new Error(`Company with ID "${id}" was not found.`);
     }
     return company;
   },
 
-  // 3. Add Company (Simulates POST to third-party API & syncs with Local Storage)
+  // 3. Add Company (POST to third-party API & syncs with Local Storage)
   addCompany: async (companyData) => {
-    // Make actual POST request to third-party API via Axios
     let apiResponse = null;
     try {
       apiResponse = await api.post('/users', {
@@ -201,7 +191,6 @@ export const companyService = {
     const updated = [newCompany, ...currentCompanies];
     setStoredCompanies(updated);
 
-    // Log Activity for Module 2 Dashboard synchronization
     logActivity({
       id: `act-${Date.now()}`,
       type: 'company',
@@ -216,12 +205,12 @@ export const companyService = {
     return newCompany;
   },
 
-  // 4. Edit Company (Simulates PUT to third-party API & syncs with Local Storage)
+  // 4. Edit Company (PUT to third-party API & syncs with Local Storage)
   updateCompany: async (id, companyData) => {
-    // Attempt PUT call to Third-Party API
+    const numericId = String(id).replace(/[^\d]/g, '');
     try {
-      if (typeof id === 'number' || !isNaN(id)) {
-        await api.put(`/users/${id}`, companyData);
+      if (numericId) {
+        await api.put(`/users/${numericId}`, companyData);
       }
     } catch (e) {
       console.warn('Third-party API PUT simulated locally:', e);
@@ -237,15 +226,15 @@ export const companyService = {
     const existing = currentCompanies[index];
     const updatedCompany = {
       ...existing,
-      name: companyData.name?.trim() || existing.name,
-      logo: companyData.logo?.trim() || existing.logo,
+      name: companyData.name !== undefined ? companyData.name.trim() : existing.name,
+      logo: companyData.logo !== undefined ? companyData.logo.trim() : existing.logo,
       logoText: (companyData.name || existing.name).trim().substring(0, 2).toUpperCase(),
       industry: companyData.industry || existing.industry,
-      location: companyData.location?.trim() || existing.location,
-      website: companyData.website?.trim() || existing.website,
-      contactEmail: companyData.contactEmail?.trim().toLowerCase() || existing.contactEmail,
+      location: companyData.location !== undefined ? companyData.location.trim() : existing.location,
+      website: companyData.website !== undefined ? companyData.website.trim() : existing.website,
+      contactEmail: companyData.contactEmail !== undefined ? companyData.contactEmail.trim().toLowerCase() : existing.contactEmail,
       employees: companyData.employees || existing.employees,
-      description: companyData.description?.trim() || existing.description,
+      description: companyData.description !== undefined ? companyData.description.trim() : existing.description,
       updatedAt: new Date().toISOString(),
     };
 
@@ -259,18 +248,19 @@ export const companyService = {
       description: `${updatedCompany.name} updated their official company details and location.`,
       timestamp: 'Just now',
       badge: 'Company Edit',
-      badgeColor: 'indigo',
+      badgeColor: 'emerald',
       iconName: 'Building2',
     });
 
     return updatedCompany;
   },
 
-  // 5. Delete Company (Simulates DELETE to third-party API & syncs with Local Storage)
+  // 5. Delete Company (DELETE to third-party API & syncs with Local Storage)
   deleteCompany: async (id) => {
+    const numericId = String(id).replace(/[^\d]/g, '');
     try {
-      if (typeof id === 'number' || !isNaN(id)) {
-        await api.delete(`/users/${id}`);
+      if (numericId) {
+        await api.delete(`/users/${numericId}`);
       }
     } catch (e) {
       console.warn('Third-party API DELETE simulated locally:', e);

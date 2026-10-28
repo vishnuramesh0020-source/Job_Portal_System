@@ -38,9 +38,8 @@ export const RecentActivities = ({ activities = [] }) => {
   const getBadgeStyle = (color) => {
     switch (color) {
       case 'emerald':
+      case 'darkGreen':
         return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'indigo':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       case 'purple':
         return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'amber':
@@ -58,7 +57,7 @@ export const RecentActivities = ({ activities = [] }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-indigo-600" />
+            <Clock className="w-5 h-5 text-emerald-800" />
             Recent Activities
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -75,7 +74,7 @@ export const RecentActivities = ({ activities = [] }) => {
               onClick={() => setFilterType(f)}
               className={`px-2.5 py-1 rounded-lg font-semibold capitalize transition-all cursor-pointer ${
                 filterType === f
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-emerald-800 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >

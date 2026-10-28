@@ -119,7 +119,7 @@ export const JobDetails = () => {
   if (loading) {
     return (
       <div className="w-full px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+        <Loader2 className="w-10 h-10 text-emerald-800 animate-spin" />
         <p className="text-sm font-semibold text-slate-500">Loading job posting details...</p>
       </div>
     );
@@ -135,7 +135,7 @@ export const JobDetails = () => {
         <p className="text-sm text-slate-500">{error || 'The requested job posting does not exist.'}</p>
         <Link
           to="/jobs"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs shadow-md transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Jobs Directory
@@ -150,7 +150,7 @@ export const JobDetails = () => {
       <div className="flex items-center justify-between">
         <Link
           to="/jobs"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-emerald-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Jobs Directory
@@ -160,7 +160,7 @@ export const JobDetails = () => {
           <button
             type="button"
             onClick={handleShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-emerald-800 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
             title="Share job link"
           >
             <Share2 className="w-3.5 h-3.5" />
@@ -188,7 +188,7 @@ export const JobDetails = () => {
           <div className="space-y-3 flex-1">
             {/* Badges Row: Category, Status, Employment Type, Experience */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 uppercase tracking-wider">
                 {job.category}
               </span>
 
@@ -228,7 +228,7 @@ export const JobDetails = () => {
 
             <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-600">
               <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-                <Building2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                <Building2 className="w-4 h-4 text-emerald-800 shrink-0" />
                 <span>{job.company}</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -253,7 +253,7 @@ export const JobDetails = () => {
               <button
                 type="button"
                 onClick={() => setIsApplyModalOpen(true)}
-                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-200 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02]"
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm shadow-md shadow-emerald-950/20 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02]"
               >
                 <Send className="w-4 h-4" />
                 <span>Apply for this Position</span>
@@ -300,11 +300,11 @@ export const JobDetails = () => {
           </div>
 
           {/* Experience Level */}
-          <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-1">
-            <span className="text-[11px] font-semibold text-indigo-800 uppercase tracking-wider block">
+          <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-100 space-y-1">
+            <span className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider block">
               Experience Level
             </span>
-            <p className="text-base font-extrabold text-indigo-700 flex items-center gap-1">
+            <p className="text-base font-extrabold text-amber-700 flex items-center gap-1">
               <Award className="w-4 h-4 shrink-0" />
               <span>{job.experienceLevel || 'Mid Level'}</span>
             </p>
@@ -360,7 +360,7 @@ export const JobDetails = () => {
           {job.skills && job.skills.length > 0 && (
             <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-3">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
+                <Sparkles className="w-5 h-5 text-emerald-800" />
                 Required Skills & Tech Stack
               </h2>
               <p className="text-xs text-slate-500">
@@ -370,9 +370,9 @@ export const JobDetails = () => {
                 {job.skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-800" />
                     <span>{skill}</span>
                   </span>
                 ))}
@@ -414,12 +414,12 @@ export const JobDetails = () => {
           {/* Company Snapshot */}
           <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-100">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-800 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-emerald-950/20">
                 {job.company.substring(0, 2).toUpperCase()}
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base">{job.company}</h3>
-                <span className="text-xs text-indigo-600 font-semibold">Verified Employer</span>
+                <span className="text-xs text-emerald-800 font-semibold">Verified Employer</span>
               </div>
             </div>
 
@@ -441,7 +441,7 @@ export const JobDetails = () => {
                   <span className="text-slate-400">Contact:</span>
                   <a
                     href={`mailto:${job.contactEmail}`}
-                    className="font-semibold text-indigo-600 hover:underline truncate"
+                    className="font-semibold text-emerald-800 hover:underline truncate"
                   >
                     {job.contactEmail}
                   </a>
@@ -452,7 +452,7 @@ export const JobDetails = () => {
             <div className="pt-2">
               <Link
                 to="/companies"
-                className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-indigo-50 text-indigo-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-slate-200"
+                className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-emerald-800 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-slate-200"
               >
                 <span>View Company Profile</span>
               </Link>
@@ -460,16 +460,16 @@ export const JobDetails = () => {
           </div>
 
           {/* Quick Apply Callout Card */}
-          <div className="bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-3xl p-6 text-white shadow-xl space-y-4">
+          <div className="bg-gradient-to-br from-[#0A2B1A] via-[#0F3822] to-emerald-950 rounded-3xl p-6 text-white shadow-xl space-y-4">
             <h3 className="font-bold text-base text-white">Ready to take the next step?</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-emerald-100 leading-relaxed">
               Submit your candidate application in 1-click. Your profile and portfolio will be immediately transmitted to the hiring team.
             </p>
             {isOpen ? (
               <button
                 type="button"
                 onClick={() => setIsApplyModalOpen(true)}
-                className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Apply Now</span>
@@ -492,9 +492,9 @@ export const JobDetails = () => {
                   <Link
                     key={rel.id}
                     to={`/jobs/${rel.id}`}
-                    className="block p-3 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all space-y-1 group"
+                    className="block p-3 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all space-y-1 group"
                   >
-                    <h4 className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 line-clamp-1">
+                    <h4 className="text-xs font-bold text-slate-900 group-hover:text-emerald-800 line-clamp-1">
                       {rel.title}
                     </h4>
                     <p className="text-[11px] text-slate-500">

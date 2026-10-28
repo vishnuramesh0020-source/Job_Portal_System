@@ -106,7 +106,7 @@ export const ApplicationStatusModal = ({
 
         {/* Modal Header */}
         <div className="flex items-start gap-3.5 pr-8">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-100">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0 border border-emerald-100">
             <Building2 className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -122,8 +122,8 @@ export const ApplicationStatusModal = ({
                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : application.statusColor?.includes('amber') || application.status === 'Under Review'
                     ? 'bg-amber-50 text-amber-800 border-amber-200'
-                    : application.statusColor?.includes('indigo') || application.status === 'Shortlisted'
-                    ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                    : application.status === 'Shortlisted'
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : 'bg-blue-50 text-blue-800 border-blue-200'
                 }`}
               >
@@ -177,8 +177,8 @@ export const ApplicationStatusModal = ({
             <span className="text-[10px] uppercase font-bold text-slate-400 block">
               Verification
             </span>
-            <span className="font-semibold text-indigo-700 flex items-center gap-1 mt-0.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="font-semibold text-emerald-800 flex items-center gap-1 mt-0.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-800" />
               Profile Matched
             </span>
           </div>

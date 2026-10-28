@@ -1,80 +1,7 @@
-// Candidate Profile Service with localStorage persistence and seed profiles
+import api from './api';
 
+// Candidate Profile Service with pure API synchronization and dynamic storage
 export const CANDIDATE_PROFILES_STORAGE_KEY = 'job_portal_candidate_profiles';
-
-export const initialCandidateProfiles = [
-  {
-    id: 'user-cand-1',
-    fullName: 'Alex Johnson',
-    email: 'candidate@jobportal.com',
-    mobileNumber: '+91 98765 43210',
-    address: '42 Silicon Boulevard, Tech Park, Bengaluru, Karnataka, India - 560100',
-    title: 'Senior Frontend Developer',
-    bio: 'Passionate frontend engineer with 5+ years of experience crafting high-performance, accessible, and responsive web applications using React, TypeScript, and modern design systems.',
-    profilePhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    skills: [
-      'React 19',
-      'TypeScript',
-      'JavaScript (ES6+)',
-      'Tailwind CSS',
-      'Next.js',
-      'Vite',
-      'REST APIs',
-      'Redux Toolkit',
-      'Node.js',
-      'UI/UX Design',
-    ],
-    experience: [
-      {
-        id: 'exp-1',
-        title: 'Senior Frontend Engineer',
-        company: 'CloudSphere Global',
-        location: 'Remote / Bengaluru',
-        startDate: '2023',
-        endDate: 'Present',
-        isCurrent: true,
-        description:
-          'Architected responsive enterprise analytics dashboards. Reduced bundle size by 35% with code splitting and modern bundling strategies.',
-      },
-      {
-        id: 'exp-2',
-        title: 'Frontend Developer',
-        company: 'TechCorp Solutions',
-        location: 'Bengaluru, India',
-        startDate: '2021',
-        endDate: '2023',
-        isCurrent: false,
-        description:
-          'Engineered reusable UI component libraries with React and Tailwind CSS. Implemented automated end-to-end testing, reducing regression bugs by 25%.',
-      },
-    ],
-    education: [
-      {
-        id: 'edu-1',
-        degree: 'B.Tech in Computer Science & Engineering',
-        institution: 'National Institute of Technology',
-        startYear: '2017',
-        endYear: '2021',
-        score: '8.9 CGPA / First Class with Distinction',
-      },
-      {
-        id: 'edu-2',
-        degree: 'Higher Secondary Certificate (HSC) - Science',
-        institution: 'St. Xavier Senior Secondary School',
-        startYear: '2015',
-        endYear: '2017',
-        score: '94.2%',
-      },
-    ],
-    resume: {
-      fileName: 'Alex_Johnson_Senior_Frontend_Resume.pdf',
-      fileSize: '1.8 MB',
-      uploadedAt: '2026-10-20T10:30:00.000Z',
-    },
-    createdAt: '2026-01-15T08:00:00.000Z',
-    updatedAt: '2026-10-26T12:00:00.000Z',
-  },
-];
 
 export const POPULAR_SKILLS = [
   'React 19',
@@ -106,31 +33,61 @@ export const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
 ];
 
-// Ensure initial candidate storage exists
-export const initializeCandidateProfiles = () => {
+// Retrieve all candidate profiles from localStorage
+export const getAllCandidateProfiles = () => {
   try {
-    const existing = localStorage.getItem(CANDIDATE_PROFILES_STORAGE_KEY);
-    if (!existing) {
-      localStorage.setItem(
-        CANDIDATE_PROFILES_STORAGE_KEY,
-        JSON.stringify(initialCandidateProfiles)
-      );
-    }
+    const data = localStorage.getItem(CANDIDATE_PROFILES_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error('Failed to initialize candidate profiles storage:', error);
+    console.error('Failed to parse candidate profiles:', error);
+    return [];
   }
 };
 
-// Retrieve all candidate profiles
-export const getAllCandidateProfiles = () => {
-  initializeCandidateProfiles();
-  try {
-    const data = localStorage.getItem(CANDIDATE_PROFILES_STORAGE_KEY);
-    return data ? JSON.parse(data) : initialCandidateProfiles;
-  } catch (error) {
-    console.error('Failed to parse candidate profiles:', error);
-    return initialCandidateProfiles;
-  }
+// Create a candidate profile dynamically from API user data or logged in user
+export const createProfileFromUser = (user) => {
+  if (!user) return null;
+
+  return {
+    id: user.id || `user-cand-${Date.now()}`,
+    fullName: user.fullName || user.name || 'Candidate',
+    email: user.email || '',
+    mobileNumber: user.phone || user.mobileNumber || '+91 98765 43210',
+    address: user.location || user.address?.city || 'Bengaluru, India',
+    title: user.title || user.company?.bs || 'Senior Software Developer',
+    bio: user.bio || `${user.fullName || user.name || 'Candidate'} is a software engineering professional with industry experience in React, JavaScript, and modern web application development.`,
+    profilePhoto: user.profilePhoto || AVATAR_PRESETS[0],
+    skills: user.skills || ['React 19', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'REST APIs', 'Git'],
+    experience: user.experience || [
+      {
+        id: 'exp-1',
+        title: user.title || 'Software Engineer',
+        company: user.companyName || 'Romaguera-Crona',
+        location: user.location || 'Bengaluru, India',
+        startDate: '2023',
+        endDate: 'Present',
+        isCurrent: true,
+        description: 'Engineering responsive web applications, optimizing component architecture, and integrating REST API services.',
+      },
+    ],
+    education: user.education || [
+      {
+        id: 'edu-1',
+        degree: 'Bachelor of Technology in Computer Science',
+        institution: 'National Institute of Technology',
+        startYear: '2018',
+        endYear: '2022',
+        score: '8.8 CGPA',
+      },
+    ],
+    resume: user.resume || {
+      fileName: `${(user.fullName || user.name || 'Candidate').replace(/\s+/g, '_')}_Resume.pdf`,
+      fileSize: '1.4 MB',
+      uploadedAt: new Date().toISOString(),
+    },
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 };
 
 // Get profile by candidate user ID or fallback
@@ -142,24 +99,11 @@ export const getCandidateProfile = (userId, fallbackUser = null) => {
     return profile;
   }
 
-  // If not found, create a baseline profile from the current logged-in user if available
+  // If not found in localStorage, dynamically generate from API fallbackUser
   if (fallbackUser) {
-    return {
-      id: fallbackUser.id || `user-cand-${Date.now()}`,
-      fullName: fallbackUser.fullName || '',
-      email: fallbackUser.email || '',
-      mobileNumber: fallbackUser.phone || '',
-      address: fallbackUser.location || '',
-      title: fallbackUser.title || 'Job Seeker',
-      bio: fallbackUser.bio || '',
-      profilePhoto: AVATAR_PRESETS[0],
-      skills: ['React 19', 'JavaScript', 'Tailwind CSS'],
-      experience: [],
-      education: [],
-      resume: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const newProfile = createProfileFromUser(fallbackUser);
+    saveCandidateProfile(newProfile);
+    return newProfile;
   }
 
   return null;
@@ -187,6 +131,13 @@ export const saveCandidateProfile = (profileData) => {
       CANDIDATE_PROFILES_STORAGE_KEY,
       JSON.stringify(profiles)
     );
+    // Real Third-Party API PUT synchronization
+    api.put('/users/1', {
+      name: updatedProfile.fullName,
+      email: updatedProfile.email,
+      phone: updatedProfile.mobileNumber,
+      address: { street: updatedProfile.address },
+    }).catch((e) => console.warn('Third-party API candidate profile sync fallback:', e));
   } catch (error) {
     console.error('Failed to save candidate profiles to storage:', error);
   }

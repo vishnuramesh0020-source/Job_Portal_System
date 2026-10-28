@@ -211,13 +211,13 @@ export const CompaniesList = () => {
   return (
     <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* Top Banner Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0A2B1A] via-[#0F3822] to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               Verified Companies Directory
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+            <p className="text-emerald-100 text-xs sm:text-sm max-w-2xl leading-relaxed">
               Explore leading organizations hiring on VS Job Portal. Powered by Third-Party REST API integration with real-time add, edit, and deletion management.
             </p>
           </div>
@@ -237,7 +237,7 @@ export const CompaniesList = () => {
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-900/30 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Add Company</span>
@@ -260,7 +260,7 @@ export const CompaniesList = () => {
                 setCurrentPage(1);
               }}
               placeholder="Search companies by name, city, or mission..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white placeholder-slate-400"
+              className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white placeholder-slate-400"
             />
             {searchQuery && (
               <button
@@ -285,7 +285,7 @@ export const CompaniesList = () => {
                   setSelectedIndustry(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+                className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
               >
                 <option value="all">All Industries ({companies.length})</option>
                 {INDUSTRY_OPTIONS.map((ind) => (
@@ -306,7 +306,7 @@ export const CompaniesList = () => {
                   setSortBy(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700 font-medium"
+                className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700 font-medium"
               >
                 <option value="name-asc">Sort: Name (A-Z)</option>
                 <option value="name-desc">Sort: Name (Z-A)</option>
@@ -324,7 +324,7 @@ export const CompaniesList = () => {
                 setItemsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 bg-white text-slate-700"
+              className="px-2.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-800 bg-white text-slate-700"
             >
               <option value={6}>6 per page</option>
               <option value={9}>9 per page</option>
@@ -344,7 +344,7 @@ export const CompaniesList = () => {
                 </span>
               )}
               {selectedIndustry !== 'all' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-medium">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-medium">
                   Industry: {selectedIndustry}
                 </span>
               )}
@@ -358,7 +358,7 @@ export const CompaniesList = () => {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer"
+              className="text-xs text-emerald-800 hover:text-emerald-950 font-semibold cursor-pointer"
             >
               Reset Filters
             </button>
@@ -421,14 +421,14 @@ export const CompaniesList = () => {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-semibold text-xs hover:bg-indigo-100 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-800 font-semibold text-xs hover:bg-emerald-100 transition-colors cursor-pointer"
             >
               Clear All Filters
             </button>
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-emerald-800 text-white font-semibold text-xs hover:bg-emerald-900 transition-colors cursor-pointer"
             >
               Add New Company
             </button>
@@ -479,7 +479,7 @@ export const CompaniesList = () => {
                 onClick={() => setCurrentPage(pageNum)}
                 className={`w-8 h-8 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                   currentPage === pageNum
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-emerald-800 text-white shadow-sm'
                     : 'text-slate-600 hover:bg-slate-100 border border-transparent'
                 }`}
               >

@@ -81,7 +81,7 @@ export const Register = () => {
       <div className="max-w-xl w-full space-y-6">
         {/* Header */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-800 text-white shadow-lg shadow-emerald-950/20 mb-4">
             <Briefcase className="w-7 h-7" />
           </div>
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -105,14 +105,14 @@ export const Register = () => {
                 onClick={() => setRole('candidate')}
                 className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-start gap-3 ${
                   role === 'candidate'
-                    ? 'border-indigo-600 bg-indigo-50/40 shadow-sm ring-1 ring-indigo-600/20'
+                    ? 'border-emerald-800 bg-emerald-50/40 shadow-sm ring-1 ring-emerald-800/20'
                     : 'border-slate-200 hover:border-slate-300 bg-white'
                 }`}
               >
                 <div
                   className={`p-2 rounded-lg ${
                     role === 'candidate'
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-emerald-800 text-white'
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
@@ -131,14 +131,14 @@ export const Register = () => {
                 onClick={() => setRole('recruiter')}
                 className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-start gap-3 ${
                   role === 'recruiter'
-                    ? 'border-indigo-600 bg-indigo-50/40 shadow-sm ring-1 ring-indigo-600/20'
+                    ? 'border-emerald-800 bg-emerald-50/40 shadow-sm ring-1 ring-emerald-800/20'
                     : 'border-slate-200 hover:border-slate-300 bg-white'
                 }`}
               >
                 <div
                   className={`p-2 rounded-lg ${
                     role === 'recruiter'
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-emerald-800 text-white'
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
@@ -183,7 +183,7 @@ export const Register = () => {
                   className={`block w-full pl-10 pr-3 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                     errors.fullName
                       ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                      : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                   }`}
                   {...register('fullName', {
                     required: 'Full name is required',
@@ -223,7 +223,7 @@ export const Register = () => {
                     className={`block w-full pl-10 pr-3 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                       errors.email
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                        : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                        : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                     }`}
                     {...register('email', {
                       required: 'Email address is required',
@@ -261,7 +261,7 @@ export const Register = () => {
                     className={`block w-full pl-10 pr-3 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                       errors.phone
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                        : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                        : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                     }`}
                     {...register('phone', {
                       required: 'Phone number is required',
@@ -298,7 +298,7 @@ export const Register = () => {
                     id="title"
                     type="text"
                     placeholder="e.g. Frontend Developer, UI Designer"
-                    className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-indigo-600 focus:ring-indigo-100 bg-white transition-all"
+                    className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-emerald-800 focus:ring-emerald-100 bg-white transition-all"
                     {...register('title')}
                   />
                 </div>
@@ -323,7 +323,7 @@ export const Register = () => {
                       className={`block w-full pl-10 pr-3 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                         errors.companyName
                           ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                          : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                          : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                       }`}
                       {...register('companyName', {
                         required: 'Company name is required for recruiters',
@@ -353,7 +353,7 @@ export const Register = () => {
                       id="companyWebsite"
                       type="url"
                       placeholder="https://company.example.com"
-                      className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-indigo-600 focus:ring-indigo-100 bg-white transition-all"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-emerald-800 focus:ring-emerald-100 bg-white transition-all"
                       {...register('companyWebsite')}
                     />
                   </div>
@@ -383,7 +383,7 @@ export const Register = () => {
                     className={`block w-full pl-10 pr-10 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                       errors.password
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                        : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                        : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                     }`}
                     {...register('password', {
                       required: 'Password is required',
@@ -434,7 +434,7 @@ export const Register = () => {
                     className={`block w-full pl-10 pr-10 py-2.5 border rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                       errors.confirmPassword
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20'
-                        : 'border-slate-300 focus:border-indigo-600 focus:ring-indigo-100 bg-white'
+                        : 'border-slate-300 focus:border-emerald-800 focus:ring-emerald-100 bg-white'
                     }`}
                     {...register('confirmPassword', {
                       required: 'Please confirm your password',
@@ -471,7 +471,7 @@ export const Register = () => {
                   <input
                     id="agreeTerms"
                     type="checkbox"
-                    className="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                    className="w-4 h-4 rounded text-emerald-800 border-slate-300 focus:ring-emerald-800 cursor-pointer"
                     {...register('agreeTerms', {
                       required: 'You must accept the terms to continue',
                     })}
@@ -480,11 +480,11 @@ export const Register = () => {
                 <div className="ml-3 text-xs text-slate-600">
                   <label htmlFor="agreeTerms">
                     I agree to the{' '}
-                    <span className="text-indigo-600 hover:underline cursor-pointer">
+                    <span className="text-emerald-800 hover:underline cursor-pointer">
                       Terms of Service
                     </span>{' '}
                     and{' '}
-                    <span className="text-indigo-600 hover:underline cursor-pointer">
+                    <span className="text-emerald-800 hover:underline cursor-pointer">
                       Privacy Policy
                     </span>
                     .
@@ -503,7 +503,7 @@ export const Register = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-3 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full mt-3 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-900 active:bg-emerald-950 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-emerald-950/20 hover:shadow-emerald-950/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -521,7 +521,7 @@ export const Register = () => {
             Already registered on VS Job Portal?{' '}
             <Link
               to="/login"
-              className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="font-semibold text-emerald-800 hover:text-emerald-950 transition-colors"
             >
               Sign In here
             </Link>

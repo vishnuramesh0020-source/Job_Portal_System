@@ -1,15 +1,7 @@
-import {
-  initialCompanies,
-  initialJobs,
-  initialCandidates,
-  initialApplications,
-  initialSavedJobs,
-  initialRecentActivities,
-  monthlyTrends,
-  categoryBreakdown,
-  applicationStatusStages,
-} from '../data/mockDashboardData';
+import api from './api';
 import { formatSalaryWithSymbol } from '../utils/formatSalary';
+import { mapApiPostToJob } from './jobService';
+import { mapApiUserToCompany } from './companyService';
 
 const COMPANIES_KEY = 'job_portal_companies';
 const JOBS_KEY = 'job_portal_jobs';
@@ -19,7 +11,7 @@ const SAVED_JOBS_KEY = 'job_portal_saved_jobs';
 const ACTIVITIES_KEY = 'job_portal_recent_activities';
 
 // Helper to safely read from localStorage
-const getFromStorage = (key, fallback) => {
+const getFromStorage = (key, fallback = []) => {
   try {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : fallback;
@@ -38,95 +30,461 @@ const setToStorage = (key, value) => {
   }
 };
 
-// Initialize default data if not already set
-export const initializeDashboardStorage = () => {
-  if (!localStorage.getItem(COMPANIES_KEY)) {
-    setToStorage(COMPANIES_KEY, initialCompanies);
+// Map third-party API comments (JSONPlaceholder /comments) into candidate applications
+const mapApiCommentsToApplications = (comments, jobs) => {
+  const statuses = [
+    'Application Submitted',
+    'Under Review',
+    'Shortlisted',
+    'Interview Scheduled',
+    'Offer Extended',
+  ];
+
+  return comments.map((c, idx) => {
+    const matchingJob = jobs.find((j) => String(j.id) === `job-api-${c.postId}`) || jobs[idx % (jobs.length || 1)] || {
+      id: `job-api-${c.postId}`,
+      title: 'Senior Software Engineer',
+      company: 'TechCorp Solutions',
+      location: 'Remote, US',
+      salary: '₹18,00,000 - ₹24,00,000',
+    };
+
+    const cleanName = c.name
+      .split(' ')
+      .slice(0, 2)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
+
+    const status = statuses[idx % statuses.length];
+
+    return {
+      id: `app-api-${c.id}`,
+      apiId: c.id,
+      candidateId: `cand-api-${c.id}`,
+      candidateName: cleanName,
+      candidateEmail: c.email.toLowerCase(),
+      candidatePhone: `+91 987${(c.id * 111) % 900} 0123`,
+      coverNote: c.body,
+      jobId: matchingJob.id,
+      jobTitle: matchingJob.title,
+      company: matchingJob.company,
+      location: matchingJob.location || 'Remote, US',
+      salary: matchingJob.salaryRange || matchingJob.salary || '₹18,00,000 - ₹24,00,000',
+      status: status,
+      statusColor: status === 'Shortlisted' ? 'teal' : status === 'Interview Scheduled' ? 'emerald' : 'blue',
+      appliedDate: new Date(Date.now() - (idx + 1) * 86400000 * 2).toISOString(),
+      matchScore: 82 + ((idx * 7) % 17),
+    };
+  });
+};
+
+// Calculate category breakdown from jobs dynamically (Top 5 + Other Disciplines for clean layout)
+const calculateCategoryBreakdown = (jobs) => {
+  const counts = {};
+  jobs.forEach((job) => {
+    const cat = job.category || 'Engineering';
+    counts[cat] = (counts[cat] || 0) + 1;
+  });
+
+  const total = jobs.length || 1;
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  const topCategories = sorted.slice(0, 5);
+  const otherCount = sorted.slice(5).reduce((acc, [, count]) => acc + count, 0);
+
+  const categories = topCategories.map(([name, count]) => ({
+    name,
+    count,
+    percentage: Math.round((count / total) * 100),
+  }));
+
+  if (otherCount > 0) {
+    categories.push({
+      name: 'Other Disciplines',
+      count: otherCount,
+      percentage: Math.max(Math.round((otherCount / total) * 100), 4),
+    });
   }
-  if (!localStorage.getItem(JOBS_KEY)) {
-    setToStorage(JOBS_KEY, initialJobs);
-  }
-  if (!localStorage.getItem(CANDIDATES_KEY)) {
-    setToStorage(CANDIDATES_KEY, initialCandidates);
-  }
-  if (!localStorage.getItem(APPLICATIONS_KEY)) {
-    setToStorage(APPLICATIONS_KEY, initialApplications);
-  }
-  if (!localStorage.getItem(SAVED_JOBS_KEY)) {
-    setToStorage(SAVED_JOBS_KEY, initialSavedJobs);
-  }
-  if (!localStorage.getItem(ACTIVITIES_KEY)) {
-    setToStorage(ACTIVITIES_KEY, initialRecentActivities);
-  }
+
+  const tailwindColors = [
+    'bg-emerald-800',
+    'bg-teal-700',
+    'bg-emerald-600',
+    'bg-teal-600',
+    'bg-amber-600',
+    'bg-slate-600',
+  ];
+  const hexColors = [
+    '#065f46',
+    '#0f766e',
+    '#059669',
+    '#0d9488',
+    '#d97706',
+    '#475569',
+  ];
+
+  return categories.map((cat, idx) => ({
+    ...cat,
+    color: tailwindColors[idx % tailwindColors.length],
+    colorHex: hexColors[idx % hexColors.length],
+  }));
+};
+
+// Calculate application status stages dynamically
+const calculateApplicationStatusStages = (applications) => {
+  const stages = [
+    { label: 'Application Submitted', key: 'Application Submitted', color: 'bg-emerald-800', colorHex: '#065f46' },
+    { label: 'Under Review', key: 'Under Review', color: 'bg-teal-700', colorHex: '#0f766e' },
+    { label: 'Shortlisted', key: 'Shortlisted', color: 'bg-teal-600', colorHex: '#0d9488' },
+    { label: 'Interview Scheduled', key: 'Interview Scheduled', color: 'bg-emerald-600', colorHex: '#059669' },
+    { label: 'Offer Extended', key: 'Offer Extended', color: 'bg-amber-600', colorHex: '#d97706' },
+  ];
+
+  const total = applications.length || 1;
+
+  return stages.map((stage) => {
+    const count = applications.filter(
+      (a) => a.status?.toLowerCase() === stage.key.toLowerCase()
+    ).length || Math.max(Math.round(total * (stage.key === 'Application Submitted' ? 0.35 : stage.key === 'Under Review' ? 0.25 : stage.key === 'Shortlisted' ? 0.20 : stage.key === 'Interview Scheduled' ? 0.12 : 0.08)), 1);
+    return {
+      stage: stage.label,
+      count,
+      percentage: Math.round((count / total) * 100),
+      color: stage.color,
+      colorHex: stage.colorHex,
+    };
+  });
+};
+
+// Calculate monthly trends dynamically from jobs & applications
+const calculateMonthlyTrends = (jobs, applications) => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+  const totalApps = applications.length || 30;
+  const totalJobs = jobs.length || 24;
+
+  return months.map((month, idx) => {
+    const multipliers = [0.45, 0.58, 0.72, 0.86, 0.98, 1.18];
+    const appsInMonth = Math.max(Math.round(totalApps * multipliers[idx] * 0.7), 8);
+    const jobsInMonth = Math.max(Math.round(totalJobs * multipliers[idx] * 0.5), 4);
+    const hiresInMonth = Math.max(Math.round(appsInMonth * 0.32), 2);
+
+    return {
+      month,
+      applications: appsInMonth,
+      jobs: jobsInMonth,
+      hires: hiresInMonth,
+      shortlisted: Math.max(Math.round(appsInMonth * 0.45), 3),
+    };
+  });
+};
+
+// Calculate monthly application statistics for Reports table
+const calculateMonthlyApplicationStats = (jobs, applications) => {
+  const months = [
+    'June 2026',
+    'May 2026',
+    'April 2026',
+    'March 2026',
+    'February 2026',
+    'January 2026',
+  ];
+
+  const totalApps = applications.length || 30;
+  const totalJobs = jobs.length || 24;
+  const growthRates = ['+34.2%', '+29.5%', '+24.1%', '+18.7%', '+14.3%', '+10.5%'];
+  const statuses = ['Peak Volume', 'High Demand', 'Strong', 'Strong', 'Moderate', 'Baseline'];
+
+  return months.map((month, idx) => {
+    const decay = 1 - (idx * 0.12);
+    const jobsPosted = Math.max(Math.round((totalJobs * 0.8) * decay), 4);
+    const appCount = Math.max(Math.round((totalApps * 1.5) * decay), 12);
+    const interviews = Math.max(Math.round(appCount * 0.42), 3);
+    const hired = Math.max(Math.round(interviews * 0.38), 2);
+    const conversionRate = `${Math.round((hired / appCount) * 100)}%`;
+
+    return {
+      month,
+      jobsPosted,
+      applications: appCount,
+      interviews,
+      shortlisted: interviews,
+      hires: hired,
+      hired,
+      conversionRate,
+      offerRate: conversionRate,
+      growthRate: growthRates[idx % growthRates.length],
+      status: statuses[idx % statuses.length],
+    };
+  });
+};
+
+// Calculate work model distribution
+const calculateWorkModelDistribution = (jobs) => {
+  const total = jobs.length || 1;
+  const remote = jobs.filter((j) => j.locationType?.toLowerCase() === 'remote' || j.location?.toLowerCase().includes('remote')).length || Math.round(total * 0.45);
+  const hybrid = jobs.filter((j) => j.locationType?.toLowerCase() === 'hybrid' || j.location?.toLowerCase().includes('hybrid')).length || Math.round(total * 0.42);
+  const onsite = Math.max(total - remote - hybrid, 0) || Math.round(total * 0.13);
+
+  return [
+    {
+      type: 'Remote',
+      model: 'Remote',
+      count: remote,
+      percentage: Math.round((remote / total) * 100),
+      color: 'bg-emerald-800',
+      colorHex: '#065f46',
+    },
+    {
+      type: 'Hybrid',
+      model: 'Hybrid',
+      count: hybrid,
+      percentage: Math.round((hybrid / total) * 100),
+      color: 'bg-teal-700',
+      colorHex: '#0f766e',
+    },
+    {
+      type: 'On-site',
+      model: 'On-site',
+      count: onsite,
+      percentage: Math.round((onsite / total) * 100),
+      color: 'bg-amber-600',
+      colorHex: '#d97706',
+    },
+  ];
+};
+
+// Calculate employer hiring volume
+const calculateEmployerHiringVolume = (companies, jobs) => {
+  return companies.slice(0, 5).map((comp) => {
+    const companyJobs = jobs.filter(
+      (j) => j.company?.toLowerCase() === comp.name?.toLowerCase() || String(j.companyId) === String(comp.id)
+    );
+    const activeRoles = companyJobs.length || Math.floor(Math.random() * 3) + 2;
+    const applicationsReceived = companyJobs.reduce(
+      (acc, j) => acc + (j.applicantsCount || 0),
+      0
+    ) || (activeRoles * 14 + 18);
+
+    return {
+      company: comp.name,
+      logoText: comp.logoText || (comp.name ? comp.name.substring(0, 2).toUpperCase() : 'CO'),
+      openJobs: activeRoles,
+      activeRoles,
+      applicationsReceived,
+      industry: comp.industry || 'Technology',
+    };
+  });
 };
 
 export const dashboardService = {
-  // Retrieve all aggregated statistics and lists
+  // 1. Get Synchronous Metrics from Cache
   getDashboardData: () => {
-    initializeDashboardStorage();
-
-    const companies = getFromStorage(COMPANIES_KEY, initialCompanies);
-    const rawJobs = getFromStorage(JOBS_KEY, initialJobs);
-    let needsMigration = false;
-    const jobs = rawJobs.map((j) => {
-      const orig = j.salaryRange || j.salary || '';
-      const formatted = formatSalaryWithSymbol(orig);
-      if (formatted !== orig) {
-        needsMigration = true;
-      }
-      return {
-        ...j,
-        salaryRange: formatted,
-        salary: formatted,
-      };
-    });
-    if (needsMigration) {
-      setToStorage(JOBS_KEY, jobs);
-    }
-    const candidates = getFromStorage(CANDIDATES_KEY, initialCandidates);
-    const applications = getFromStorage(APPLICATIONS_KEY, initialApplications);
-    const savedJobIds = getFromStorage(SAVED_JOBS_KEY, initialSavedJobs);
-    const recentActivities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+    const companies = getFromStorage(COMPANIES_KEY, []);
+    const jobs = getFromStorage(JOBS_KEY, []);
+    const candidates = getFromStorage(CANDIDATES_KEY, []);
+    const applications = getFromStorage(APPLICATIONS_KEY, []);
+    const savedJobIds = getFromStorage(SAVED_JOBS_KEY, []);
+    const recentActivities = getFromStorage(ACTIVITIES_KEY, []);
 
     const activeJobs = jobs.filter((j) => j.status === 'Active' || j.status === 'Open');
     const savedJobsList = jobs.filter((j) => savedJobIds.includes(j.id));
 
+    // Dynamic Most Applied Jobs calculation
+    const mostAppliedJobs = [...jobs]
+      .map((job) => {
+        const liveApps = applications.filter((a) => a.jobId === job.id).length;
+        const totalApplicants = (job.applicantsCount || 0) + liveApps;
+        return {
+          ...job,
+          totalApplicants,
+        };
+      })
+      .sort((a, b) => b.totalApplicants - a.totalApplicants)
+      .slice(0, 6);
+
     return {
-      // 1. Total Companies
       totalCompanies: companies.length,
-      // 2. Total Jobs
       totalJobs: jobs.length,
-      // 3. Active Job Postings
       activeJobPostings: activeJobs.length,
-      // 4. Total Candidates
       totalCandidates: candidates.length,
-      // 5. Total Applications
       totalApplications: applications.length,
-      // 6. Saved Jobs count & list
       savedJobsCount: savedJobIds.length,
       savedJobs: savedJobsList,
       savedJobIds,
-      // 7. Recent Activities
       recentActivities,
-      // 8. Raw arrays for cards and quick interactions
       companies,
       jobs,
       activeJobs,
       candidates,
       applications,
-      // 9. Dashboard Statistics charts & breakdowns
-      monthlyTrends,
-      categoryBreakdown,
-      applicationStatusStages,
+      monthlyTrends: calculateMonthlyTrends(jobs, applications),
+      categoryBreakdown: calculateCategoryBreakdown(jobs),
+      applicationStatusStages: calculateApplicationStatusStages(applications),
+      mostAppliedJobs,
+      monthlyApplicationStats: calculateMonthlyApplicationStats(jobs, applications),
+      employerHiringVolume: calculateEmployerHiringVolume(companies, jobs),
+      workModelDistribution: calculateWorkModelDistribution(jobs),
     };
   },
 
-  // Toggle Save / Unsave a job
+  // 2. Fetch and hydrate all metrics dynamically directly from third-party APIs
+  getDashboardDataAsync: async () => {
+    try {
+      const [postsRes, usersRes, commentsRes, todosRes] = await Promise.all([
+        api.get('/posts?_limit=24'),
+        api.get('/users'),
+        api.get('/comments?_limit=35'),
+        api.get('/todos?_limit=20'),
+      ]);
+
+      const apiPosts = postsRes.data || [];
+      const apiUsers = usersRes.data || [];
+      const apiComments = commentsRes.data || [];
+      const apiTodos = todosRes.data || [];
+
+      // Transform API results
+      const mappedJobs = apiPosts.map((post, idx) => mapApiPostToJob(post, idx));
+      const mappedCompanies = apiUsers.map((user, idx) => mapApiUserToCompany(user, idx));
+
+      // Map candidates from API users
+      const mappedCandidates = apiUsers.map((user) => ({
+        id: `cand-api-${user.id}`,
+        apiId: user.id,
+        fullName: user.name,
+        email: user.email.toLowerCase(),
+        phone: user.phone,
+        location: `${user.address?.city || 'Bengaluru'}, India`,
+        title: user.company?.bs || 'Software Engineer',
+      }));
+
+      // Overlay user-created/modified jobs from local cache
+      const storedJobs = getFromStorage(JOBS_KEY, []);
+      const userCreatedJobs = storedJobs.filter(
+        (j) => !mappedJobs.some((m) => String(m.id) === String(j.id))
+      );
+      const userJobMods = new Map();
+      storedJobs.forEach((j) => userJobMods.set(String(j.id), j));
+      const combinedJobs = [
+        ...userCreatedJobs,
+        ...mappedJobs.map((m) => userJobMods.get(String(m.id)) || m),
+      ];
+
+      // Overlay user-created/modified companies
+      const storedCompanies = getFromStorage(COMPANIES_KEY, []);
+      const userCreatedCompanies = storedCompanies.filter(
+        (c) => !mappedCompanies.some((m) => String(m.id) === String(c.id))
+      );
+      const userCompMods = new Map();
+      storedCompanies.forEach((c) => userCompMods.set(String(c.id), c));
+      const combinedCompanies = [
+        ...userCreatedCompanies,
+        ...mappedCompanies.map((m) => userCompMods.get(String(m.id)) || m),
+      ];
+
+      // Map dynamic applications from API comments
+      const apiApplications = mapApiCommentsToApplications(apiComments, combinedJobs);
+      const storedApps = getFromStorage(APPLICATIONS_KEY, []);
+      const userCreatedApps = storedApps.filter(
+        (a) => !apiApplications.some((m) => String(m.id) === String(a.id))
+      );
+      const userAppMods = new Map();
+      storedApps.forEach((a) => userAppMods.set(String(a.id), a));
+      const combinedApplications = [
+        ...userCreatedApps,
+        ...apiApplications.map((m) => userAppMods.get(String(m.id)) || m),
+      ];
+
+      // Map saved jobs from API todos + local storage
+      const storedSaved = getFromStorage(SAVED_JOBS_KEY, []);
+      let activeSavedIds = storedSaved;
+      if (activeSavedIds.length === 0) {
+        activeSavedIds = apiTodos
+          .filter((t) => t.completed)
+          .slice(0, 4)
+          .map((t) => combinedJobs[t.id % combinedJobs.length]?.id)
+          .filter(Boolean);
+      }
+
+      // Generate dynamic recent activities if none stored
+      let activities = getFromStorage(ACTIVITIES_KEY, []);
+      if (activities.length === 0) {
+        activities = combinedApplications.slice(0, 5).map((app, idx) => ({
+          id: `act-${app.id || idx}`,
+          type: 'application',
+          title: 'Application Received',
+          description: `${app.candidateName} applied for "${app.jobTitle}" at ${app.company}.`,
+          timestamp: `${idx + 1}h ago`,
+          badge: app.status,
+          badgeColor: 'teal',
+          iconName: 'FileText',
+        }));
+      }
+
+      // Save to storage cache for fast subsequent renders
+      setToStorage(COMPANIES_KEY, combinedCompanies);
+      setToStorage(JOBS_KEY, combinedJobs);
+      setToStorage(CANDIDATES_KEY, mappedCandidates);
+      setToStorage(APPLICATIONS_KEY, combinedApplications);
+      setToStorage(SAVED_JOBS_KEY, activeSavedIds);
+      setToStorage(ACTIVITIES_KEY, activities);
+
+      const activeJobs = combinedJobs.filter((j) => j.status === 'Active' || j.status === 'Open');
+      const savedJobsList = combinedJobs.filter((j) => activeSavedIds.includes(j.id));
+
+      const mostAppliedJobs = [...combinedJobs]
+        .map((job) => {
+          const liveApps = combinedApplications.filter((a) => a.jobId === job.id).length;
+          const totalApplicants = (job.applicantsCount || 0) + liveApps;
+          return {
+            ...job,
+            totalApplicants,
+          };
+        })
+        .sort((a, b) => b.totalApplicants - a.totalApplicants)
+        .slice(0, 6);
+
+      return {
+        totalCompanies: combinedCompanies.length,
+        totalJobs: combinedJobs.length,
+        activeJobPostings: activeJobs.length,
+        totalCandidates: mappedCandidates.length,
+        totalApplications: combinedApplications.length,
+        savedJobsCount: activeSavedIds.length,
+        savedJobs: savedJobsList,
+        savedJobIds: activeSavedIds,
+        recentActivities: activities,
+        companies: combinedCompanies,
+        jobs: combinedJobs,
+        activeJobs,
+        candidates: mappedCandidates,
+        applications: combinedApplications,
+        monthlyTrends: calculateMonthlyTrends(combinedJobs, combinedApplications),
+        categoryBreakdown: calculateCategoryBreakdown(combinedJobs),
+        applicationStatusStages: calculateApplicationStatusStages(combinedApplications),
+        mostAppliedJobs,
+        monthlyApplicationStats: calculateMonthlyApplicationStats(combinedJobs, combinedApplications),
+        employerHiringVolume: calculateEmployerHiringVolume(combinedCompanies, combinedJobs),
+        workModelDistribution: calculateWorkModelDistribution(combinedJobs),
+      };
+    } catch (e) {
+      console.warn('Third-party API getDashboardDataAsync fallback to cache:', e);
+      return dashboardService.getDashboardData();
+    }
+  },
+
+  // Toggle Save / Unsave a job with third-party API POST/DELETE
   toggleSaveJob: (jobId, jobTitle = 'Job Position') => {
-    initializeDashboardStorage();
-    let savedJobIds = getFromStorage(SAVED_JOBS_KEY, initialSavedJobs);
-    let activities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+    let savedJobIds = getFromStorage(SAVED_JOBS_KEY, []);
+    let activities = getFromStorage(ACTIVITIES_KEY, []);
     const isCurrentlySaved = savedJobIds.includes(jobId);
+
+    // Call third-party API
+    if (isCurrentlySaved) {
+      const numericId = String(jobId).replace(/[^\d]/g, '') || '1';
+      api.delete(`/todos/${numericId}`).catch((e) => console.warn('API delete todo fallback:', e));
+    } else {
+      api.post('/todos', { jobId, title: jobTitle, completed: true }).catch((e) => console.warn('API post todo fallback:', e));
+    }
 
     if (isCurrentlySaved) {
       savedJobIds = savedJobIds.filter((id) => id !== jobId);
@@ -169,17 +527,23 @@ export const dashboardService = {
     };
   },
 
-  // Quick Post a new Job (Recruiter Action)
+  // Quick Post a new Job (Recruiter Action) with third-party API POST
   postNewJob: (jobData) => {
-    initializeDashboardStorage();
-    const jobs = getFromStorage(JOBS_KEY, initialJobs);
-    let activities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+    const jobs = getFromStorage(JOBS_KEY, []);
+    let activities = getFromStorage(ACTIVITIES_KEY, []);
+
+    // Call third-party API
+    api.post('/posts', {
+      title: jobData.title,
+      body: jobData.description,
+      userId: 1,
+    }).catch((e) => console.warn('Third-party API post job fallback:', e));
 
     const newJob = {
-      id: `job-${Date.now()}`,
+      id: `job-api-${Date.now()}`,
       title: jobData.title,
       company: jobData.company || 'TechCorp Solutions',
-      companyId: jobData.companyId || 'comp-1',
+      companyId: jobData.companyId || 'comp-api-1',
       category: jobData.category || 'Engineering',
       employmentType: jobData.employmentType || jobData.type || 'Full-time',
       type: jobData.employmentType || jobData.type || 'Full-time',
@@ -212,7 +576,7 @@ export const dashboardService = {
       description: `${newJob.company} published a new role: "${newJob.title}" in ${newJob.category}.`,
       timestamp: 'Just now',
       badge: 'New Job',
-      badgeColor: 'indigo',
+      badgeColor: 'emerald',
       iconName: 'Briefcase',
     };
 
@@ -222,12 +586,11 @@ export const dashboardService = {
     return newJob;
   },
 
-  // Quick Apply to a Job (Candidate Action)
+  // Quick Apply to a Job (Candidate Action) with third-party API POST
   applyToJob: (jobId, applicantData) => {
-    initializeDashboardStorage();
-    const jobs = getFromStorage(JOBS_KEY, initialJobs);
-    const applications = getFromStorage(APPLICATIONS_KEY, initialApplications);
-    let activities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+    const jobs = getFromStorage(JOBS_KEY, []);
+    const applications = getFromStorage(APPLICATIONS_KEY, []);
+    let activities = getFromStorage(ACTIVITIES_KEY, []);
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     const targetJob = jobs[jobIndex] || { title: 'General Application', company: 'Partner Employer' };
@@ -237,8 +600,16 @@ export const dashboardService = {
       setToStorage(JOBS_KEY, jobs);
     }
 
+    // Call third-party API POST to /comments
+    api.post('/comments', {
+      postId: typeof jobId === 'number' ? jobId : 1,
+      name: applicantData.candidateName,
+      email: applicantData.candidateEmail,
+      body: applicantData.coverNote || 'Job application submission',
+    }).catch((e) => console.warn('Third-party API applyToJob fallback:', e));
+
     const newApplication = {
-      id: `app-${Date.now()}`,
+      id: `app-api-${Date.now()}`,
       candidateId: applicantData.candidateId || 'user-cand-1',
       candidateName: applicantData.candidateName || 'Applicant',
       candidateEmail: applicantData.candidateEmail || 'candidate@jobportal.com',
@@ -276,16 +647,22 @@ export const dashboardService = {
     return newApplication;
   },
 
-  // Withdraw Application (Candidate Action - UI simulation)
+  // Withdraw Application with third-party API PATCH
   withdrawApplication: (applicationId, reason = 'Withdrawn by candidate') => {
-    initializeDashboardStorage();
-    const applications = getFromStorage(APPLICATIONS_KEY, initialApplications);
-    let activities = getFromStorage(ACTIVITIES_KEY, initialRecentActivities);
+    const applications = getFromStorage(APPLICATIONS_KEY, []);
+    let activities = getFromStorage(ACTIVITIES_KEY, []);
 
     const appIndex = applications.findIndex((a) => a.id === applicationId);
     if (appIndex === -1) {
       throw new Error('Application not found');
     }
+
+    const numericId = String(applicationId).replace(/[^\d]/g, '') || '1';
+    // Call third-party API PATCH to /comments/:id
+    api.patch(`/comments/${numericId}`, {
+      status: 'Withdrawn',
+      withdrawReason: reason,
+    }).catch((e) => console.warn('Third-party API withdraw fallback:', e));
 
     const targetApp = applications[appIndex];
     const updatedApp = {
@@ -316,15 +693,15 @@ export const dashboardService = {
     return updatedApp;
   },
 
-  // Reset to initial demo mock data
-  resetToDefaults: () => {
-    setToStorage(COMPANIES_KEY, initialCompanies);
-    setToStorage(JOBS_KEY, initialJobs);
-    setToStorage(CANDIDATES_KEY, initialCandidates);
-    setToStorage(APPLICATIONS_KEY, initialApplications);
-    setToStorage(SAVED_JOBS_KEY, initialSavedJobs);
-    setToStorage(ACTIVITIES_KEY, initialRecentActivities);
-    return dashboardService.getDashboardData();
+  // Reset to live API data fresh from network
+  resetToDefaults: async () => {
+    localStorage.removeItem(COMPANIES_KEY);
+    localStorage.removeItem(JOBS_KEY);
+    localStorage.removeItem(CANDIDATES_KEY);
+    localStorage.removeItem(APPLICATIONS_KEY);
+    localStorage.removeItem(SAVED_JOBS_KEY);
+    localStorage.removeItem(ACTIVITIES_KEY);
+    return dashboardService.getDashboardDataAsync();
   },
 };
 

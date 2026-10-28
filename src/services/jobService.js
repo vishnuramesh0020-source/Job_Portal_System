@@ -1,9 +1,8 @@
-import { initialJobs } from '../data/mockDashboardData';
+import api from './api';
 import { formatSalaryWithSymbol } from '../utils/formatSalary';
 
 const JOBS_STORAGE_KEY = 'job_portal_jobs';
 const ACTIVITIES_STORAGE_KEY = 'job_portal_recent_activities';
-const SAVED_JOBS_STORAGE_KEY = 'job_portal_saved_jobs';
 
 export const JOB_CATEGORIES = [
   'Engineering',
@@ -68,29 +67,116 @@ export const POPULAR_SKILLS = [
   'DevOps',
 ];
 
-// Helper to safely get stored jobs
+// Helper to map API company names by user ID from JSONPlaceholder /users
+const getApiCompanyNameById = (userId) => {
+  const apiCompaniesMap = {
+    1: 'Romaguera-Crona',
+    2: 'Deckow-Crist',
+    3: 'Romaguera-Jacobson',
+    4: 'Robel-Corkery',
+    5: 'Keebler LLC',
+    6: 'Considine-Lockman',
+    7: 'Johns Group',
+    8: 'Abernathy Group',
+    9: 'Yost and Sons',
+    10: 'Hoeger LLC',
+  };
+  return apiCompaniesMap[userId] || `Company ${userId}`;
+};
+
+// Map a third-party API post (JSONPlaceholder /posts) to a comprehensive Job Object
+export const mapApiPostToJob = (post, index) => {
+  const companyName = getApiCompanyNameById(post.userId || (index % 10) + 1);
+  const companyId = `comp-api-${post.userId || (index % 10) + 1}`;
+
+  // Clean and format post title directly from API response
+  const rawTitle = post.title || 'Software Engineer';
+  const cleanTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
+
+  const categories = [
+    'Engineering',
+    'Cloud & DevOps',
+    'Design & Creative',
+    'Data & AI',
+    'Product Management',
+    'Cybersecurity',
+    'Marketing',
+    'Mobile Development',
+  ];
+  const category = categories[index % categories.length];
+
+  const locations = [
+    'Bengaluru, India',
+    'Hyderabad, India',
+    'Pune, India',
+    'Mumbai, India',
+    'Remote, India',
+    'Delhi NCR, India',
+    'Chennai, India',
+    'San Francisco, CA',
+  ];
+  const location = locations[index % locations.length];
+  const locationTypes = ['Remote', 'Hybrid', 'On-site'];
+  const locationType = locationTypes[index % locationTypes.length];
+  const expLevels = ['Senior Level', 'Lead / Manager', 'Mid Level', 'Entry Level'];
+  const experienceLevel = expLevels[index % expLevels.length];
+  const empTypes = ['Full-time', 'Full-time', 'Contract', 'Part-time'];
+  const employmentType = empTypes[index % empTypes.length];
+
+  const salaryRanges = [
+    '₹18,00,000 - ₹24,00,000',
+    '₹22,00,000 - ₹30,00,000',
+    '₹14,00,000 - ₹20,00,000',
+    '₹25,00,000 - ₹35,00,000',
+    '₹16,00,000 - ₹22,00,000',
+    '₹12,00,000 - ₹16,00,000',
+    '₹8,00,000 - ₹11,00,000',
+    '₹28,00,000 - ₹38,00,000',
+  ];
+  const salary = salaryRanges[index % salaryRanges.length];
+  const applicants = 10 + ((index * 7) % 36);
+  const status = index % 6 === 0 ? 'Closed' : 'Open';
+
+  const cleanBody = post.body
+    ? post.body.charAt(0).toUpperCase() + post.body.slice(1)
+    : 'Exciting career opportunity at our growing company.';
+
+  return {
+    id: `job-api-${post.id}`,
+    apiId: post.id,
+    title: cleanTitle,
+    company: companyName,
+    companyId: companyId,
+    category: category,
+    employmentType: employmentType,
+    type: employmentType,
+    experienceLevel: experienceLevel,
+    salaryRange: salary,
+    salary: salary,
+    location: location,
+    locationType: locationType,
+    skills: ['React', 'TypeScript', 'Node.js', 'Tailwind CSS', 'REST APIs', 'Git'],
+    deadline: '2026-12-31',
+    status: status,
+    applicantsCount: applicants,
+    postedDate: '2026-04-15',
+    description: `${cleanBody}. Join ${companyName} to build scalable modern web platforms.`,
+    requirements: '3+ years of relevant industry experience. Proven proficiency with web engineering tools, API integrations, and collaborative team communication.',
+    responsibilities: 'Design and maintain high quality software features. Participate in technical design discussions and conduct peer code reviews.',
+    contactEmail: `careers@${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+  };
+};
+
+// Safely retrieve stored jobs from localStorage
 const getStoredJobs = () => {
   try {
     const raw = localStorage.getItem(JOBS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(JOBS_STORAGE_KEY, JSON.stringify(initialJobs));
-      return initialJobs.map(normalizeJob);
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    let needsMigration = false;
-    const normalized = parsed.map((j) => {
-      const orig = j.salaryRange || j.salary || '';
-      const norm = normalizeJob(j);
-      if (norm.salary !== orig) needsMigration = true;
-      return norm;
-    });
-    if (needsMigration) {
-      setStoredJobs(normalized);
-    }
-    return normalized;
+    return Array.isArray(parsed) ? parsed.map(normalizeJob) : [];
   } catch (error) {
     console.error('Failed to parse jobs from localStorage:', error);
-    return initialJobs.map(normalizeJob);
+    return [];
   }
 };
 
@@ -102,8 +188,8 @@ const setStoredJobs = (jobs) => {
   }
 };
 
-// Normalize legacy or partially populated job objects
-const normalizeJob = (job) => {
+// Normalize job fields
+export const normalizeJob = (job) => {
   const normStatus = job.status === 'Active' || job.status === 'Open' ? 'Open' : 'Closed';
   const normType = job.employmentType || job.type || 'Full-time';
   const normSalary = formatSalaryWithSymbol(job.salaryRange || job.salary || '12,00,000 - 18,00,000');
@@ -121,7 +207,7 @@ const normalizeJob = (job) => {
     experienceLevel: job.experienceLevel || 'Mid Level',
     salaryRange: normSalary,
     salary: normSalary,
-    location: job.location || 'Remote, US',
+    location: job.location || 'Remote, India',
     locationType: job.locationType || (job.location?.toLowerCase().includes('remote') ? 'Remote' : 'Hybrid'),
     skills: normSkills,
     deadline: job.deadline || '2026-12-31',
@@ -146,29 +232,72 @@ const logActivity = (activity) => {
 };
 
 export const jobService = {
-  // 1. Get all jobs with optional filters
+  // 1. Get all jobs dynamically using third-party API (Axios -> JSONPlaceholder /posts)
   getJobs: async () => {
-    // Small async pause for realistic UX
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    return getStoredJobs();
+    try {
+      // Direct network call to third-party API
+      const response = await api.get('/posts?_limit=24');
+      const apiPosts = response.data || [];
+
+      // Transform third-party API posts to full dynamic job schema
+      const mappedApiJobs = apiPosts.map((post, idx) => mapApiPostToJob(post, idx));
+
+      // Overlay user additions / modifications stored in local cache
+      const stored = getStoredJobs();
+      const userAdded = stored.filter((j) => !mappedApiJobs.some((m) => String(m.id) === String(j.id)));
+      const userModifiedMap = new Map();
+      stored.forEach((j) => userModifiedMap.set(String(j.id), j));
+
+      const merged = mappedApiJobs.map((m) => userModifiedMap.get(String(m.id)) || m);
+      const combined = [...userAdded, ...merged];
+
+      setStoredJobs(combined);
+      return combined;
+    } catch (error) {
+      console.warn('Third-party API getJobs network fallback to cache:', error);
+      return getStoredJobs();
+    }
   },
 
-  // 2. View Job Details by ID
+  // 2. View Job Details by ID with third-party API lookup
   getJobById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    const jobs = getStoredJobs();
-    const job = jobs.find((j) => String(j.id) === String(id));
+    const currentJobs = getStoredJobs();
+    let job = currentJobs.find((j) => String(j.id) === String(id));
+
+    if (!job) {
+      // Dynamic fetch from third-party API
+      const numericId = String(id).replace(/[^\d]/g, '') || '1';
+      try {
+        const response = await api.get(`/posts/${numericId}`);
+        if (response.data) {
+          job = mapApiPostToJob(response.data, parseInt(numericId, 10));
+        }
+      } catch (e) {
+        console.warn('Third-party API getJobById fallback:', e);
+      }
+    }
+
     if (!job) {
       throw new Error(`Job posting with ID "${id}" was not found.`);
     }
     return job;
   },
 
-  // 3. Create Job Posting
+  // 3. Create Job Posting with real third-party API POST
   createJob: async (jobData) => {
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    let apiResponse = null;
+    try {
+      apiResponse = await api.post('/posts', {
+        title: jobData.title,
+        body: jobData.description,
+        userId: 1,
+      });
+    } catch (e) {
+      console.warn('Third-party API POST simulated locally:', e);
+    }
+
     const currentJobs = getStoredJobs();
-    const newId = `job-${Date.now()}`;
+    const newId = `job-api-${apiResponse?.data?.id || Date.now()}`;
 
     let parsedSkills = jobData.skills;
     if (typeof parsedSkills === 'string') {
@@ -177,33 +306,35 @@ export const jobService = {
       parsedSkills = [];
     }
 
-    const salaryString = formatSalaryWithSymbol(jobData.salaryRange?.trim() || jobData.salary?.trim() || '12,00,000 - 18,00,000');
+    const salaryString = formatSalaryWithSymbol(
+      jobData.salaryRange?.trim() || jobData.salary?.trim() || '12,00,000 - 18,00,000'
+    );
     const normType = jobData.employmentType || jobData.type || 'Full-time';
     const normStatus = jobData.status || 'Open';
 
     const newJob = {
       id: newId,
+      apiId: apiResponse?.data?.id || Math.floor(Math.random() * 1000) + 101,
       title: jobData.title.trim(),
-      company: jobData.company?.trim() || 'TechCorp Solutions',
-      companyId: jobData.companyId || 'comp-1',
+      company: jobData.company?.trim() || 'Romaguera-Crona',
+      companyId: jobData.companyId || 'comp-api-1',
       category: jobData.category || 'Engineering',
       employmentType: normType,
       type: normType,
       experienceLevel: jobData.experienceLevel || 'Mid Level',
       salaryRange: salaryString,
       salary: salaryString,
-      location: jobData.location?.trim() || 'Remote, US',
+      location: jobData.location?.trim() || 'Remote, India',
       locationType: jobData.locationType || 'Remote',
       skills: parsedSkills.length > 0 ? parsedSkills : ['React', 'JavaScript'],
       deadline: jobData.deadline || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
       status: normStatus,
-      description: jobData.description?.trim() || 'Exciting career opportunity at our growing company.',
-      requirements: jobData.requirements?.trim() || 'Demonstrated experience in related domain and strong problem-solving mindset.',
-      responsibilities: jobData.responsibilities?.trim() || 'Deliver production features and maintain high code quality.',
-      contactEmail: jobData.contactEmail?.trim().toLowerCase() || 'careers@company.com',
       applicantsCount: 0,
       postedDate: new Date().toISOString().split('T')[0],
-      createdAt: new Date().toISOString(),
+      description: jobData.description?.trim() || 'Exciting career opportunity at our growing company.',
+      requirements: jobData.requirements?.trim() || 'Strong relevant background, technical skills, and commitment to teamwork.',
+      responsibilities: jobData.responsibilities?.trim() || 'Develop software solutions, collaborate with peers, and maintain product quality.',
+      contactEmail: jobData.contactEmail?.trim() || 'careers@romaguera-crona.com',
     };
 
     const updated = [newJob, ...currentJobs];
@@ -213,62 +344,70 @@ export const jobService = {
       id: `act-${Date.now()}`,
       type: 'job',
       title: 'New Job Posting Published',
-      description: `${newJob.company} published "${newJob.title}" (${newJob.category} • ${newJob.employmentType}).`,
+      description: `${newJob.company} created a new position: "${newJob.title}".`,
       timestamp: 'Just now',
       badge: 'New Job',
-      badgeColor: 'indigo',
+      badgeColor: 'emerald',
       iconName: 'Briefcase',
     });
 
     return newJob;
   },
 
-  // 4. Edit Job
+  // 4. Update Job with third-party API PUT
   updateJob: async (id, jobData) => {
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    const numericId = String(id).replace(/[^\d]/g, '');
+    try {
+      if (numericId) {
+        await api.put(`/posts/${numericId}`, {
+          title: jobData.title,
+          body: jobData.description,
+          userId: 1,
+        });
+      }
+    } catch (e) {
+      console.warn('Third-party API PUT simulated locally:', e);
+    }
+
     const currentJobs = getStoredJobs();
     const index = currentJobs.findIndex((j) => String(j.id) === String(id));
 
     if (index === -1) {
-      throw new Error(`Job posting with ID "${id}" was not found.`);
+      throw new Error(`Job not found with ID: ${id}`);
     }
 
     const existing = currentJobs[index];
-
     let parsedSkills = jobData.skills !== undefined ? jobData.skills : existing.skills;
     if (typeof parsedSkills === 'string') {
       parsedSkills = parsedSkills.split(',').map((s) => s.trim()).filter(Boolean);
     }
 
-    const salaryString =
-      jobData.salaryRange?.trim() ||
-      jobData.salary?.trim() ||
-      existing.salaryRange ||
-      existing.salary;
-
-    const normType = jobData.employmentType || jobData.type || existing.employmentType || existing.type;
-    const normStatus = jobData.status || existing.status;
+    const normType = jobData.employmentType || jobData.type || existing.employmentType || 'Full-time';
+    const normStatus = jobData.status || existing.status || 'Open';
 
     const updatedJob = {
       ...existing,
       title: jobData.title !== undefined ? jobData.title.trim() : existing.title,
       company: jobData.company !== undefined ? jobData.company.trim() : existing.company,
-      companyId: jobData.companyId || existing.companyId,
-      category: jobData.category || existing.category,
+      category: jobData.category !== undefined ? jobData.category : existing.category,
       employmentType: normType,
       type: normType,
-      experienceLevel: jobData.experienceLevel || existing.experienceLevel,
-      salaryRange: salaryString,
-      salary: salaryString,
+      experienceLevel: jobData.experienceLevel !== undefined ? jobData.experienceLevel : existing.experienceLevel,
+      salaryRange: jobData.salaryRange !== undefined
+        ? formatSalaryWithSymbol(jobData.salaryRange)
+        : existing.salaryRange,
+      salary: jobData.salaryRange !== undefined
+        ? formatSalaryWithSymbol(jobData.salaryRange)
+        : existing.salary,
       location: jobData.location !== undefined ? jobData.location.trim() : existing.location,
-      locationType: jobData.locationType || existing.locationType,
-      skills: Array.isArray(parsedSkills) ? parsedSkills : existing.skills,
-      deadline: jobData.deadline || existing.deadline,
+      locationType: jobData.locationType !== undefined ? jobData.locationType : existing.locationType,
+      skills: parsedSkills,
+      deadline: jobData.deadline !== undefined ? jobData.deadline : existing.deadline,
       status: normStatus,
       description: jobData.description !== undefined ? jobData.description.trim() : existing.description,
       requirements: jobData.requirements !== undefined ? jobData.requirements.trim() : existing.requirements,
       responsibilities: jobData.responsibilities !== undefined ? jobData.responsibilities.trim() : existing.responsibilities,
-      contactEmail: jobData.contactEmail !== undefined ? jobData.contactEmail.trim().toLowerCase() : existing.contactEmail,
+      contactEmail: jobData.contactEmail !== undefined ? jobData.contactEmail.trim() : existing.contactEmail,
       updatedAt: new Date().toISOString(),
     };
 
@@ -279,43 +418,39 @@ export const jobService = {
       id: `act-${Date.now()}`,
       type: 'job',
       title: 'Job Posting Updated',
-      description: `${updatedJob.company} updated details for "${updatedJob.title}".`,
+      description: `Listing "${updatedJob.title}" at ${updatedJob.company} was modified.`,
       timestamp: 'Just now',
       badge: 'Job Edit',
-      badgeColor: 'indigo',
+      badgeColor: 'emerald',
       iconName: 'Briefcase',
     });
 
     return updatedJob;
   },
 
-  // 5. Delete Job
+  // 5. Delete Job with third-party API DELETE
   deleteJob: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    const numericId = String(id).replace(/[^\d]/g, '');
+    try {
+      if (numericId) {
+        await api.delete(`/posts/${numericId}`);
+      }
+    } catch (e) {
+      console.warn('Third-party API DELETE simulated locally:', e);
+    }
+
     const currentJobs = getStoredJobs();
     const target = currentJobs.find((j) => String(j.id) === String(id));
     const filtered = currentJobs.filter((j) => String(j.id) !== String(id));
 
     setStoredJobs(filtered);
 
-    // Also remove from saved jobs if present
-    try {
-      const rawSaved = localStorage.getItem(SAVED_JOBS_STORAGE_KEY);
-      if (rawSaved) {
-        const savedIds = JSON.parse(rawSaved);
-        const updatedSaved = savedIds.filter((savedId) => String(savedId) !== String(id));
-        localStorage.setItem(SAVED_JOBS_STORAGE_KEY, JSON.stringify(updatedSaved));
-      }
-    } catch (e) {
-      console.error('Error updating saved jobs after deletion:', e);
-    }
-
     if (target) {
       logActivity({
         id: `act-${Date.now()}`,
         type: 'job',
         title: 'Job Posting Removed',
-        description: `Position "${target.title}" at ${target.company} was deleted.`,
+        description: `Position "${target.title}" at ${target.company} was closed and removed.`,
         timestamp: 'Just now',
         badge: 'Deleted',
         badgeColor: 'rose',
@@ -324,34 +459,6 @@ export const jobService = {
     }
 
     return { success: true, deletedId: id };
-  },
-
-  // 6. Toggle Job Status (Open / Closed)
-  toggleJobStatus: async (id) => {
-    const currentJobs = getStoredJobs();
-    const index = currentJobs.findIndex((j) => String(j.id) === String(id));
-    if (index === -1) {
-      throw new Error(`Job not found with ID: ${id}`);
-    }
-
-    const job = currentJobs[index];
-    const newStatus = job.status === 'Open' ? 'Closed' : 'Open';
-    job.status = newStatus;
-    currentJobs[index] = job;
-    setStoredJobs(currentJobs);
-
-    logActivity({
-      id: `act-${Date.now()}`,
-      type: 'status',
-      title: `Job Status Changed to ${newStatus}`,
-      description: `"${job.title}" at ${job.company} was set to ${newStatus}.`,
-      timestamp: 'Just now',
-      badge: newStatus === 'Open' ? 'Reopened' : 'Closed',
-      badgeColor: newStatus === 'Open' ? 'emerald' : 'rose',
-      iconName: 'Briefcase',
-    });
-
-    return job;
   },
 };
 

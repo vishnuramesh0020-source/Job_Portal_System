@@ -60,7 +60,7 @@ export const JobDetailModal = ({
         {/* Modal Top Header */}
         <div className="space-y-3 pr-8">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 uppercase tracking-wider">
               {job.category || 'General'}
             </span>
 
@@ -99,7 +99,7 @@ export const JobDetailModal = ({
 
           <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-600">
             <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-              <Building2 className="w-4 h-4 text-indigo-600 shrink-0" />
+              <Building2 className="w-4 h-4 text-emerald-800 shrink-0" />
               <span>{job.company}</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -134,11 +134,11 @@ export const JobDetailModal = ({
           </div>
 
           {/* Experience */}
-          <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-1">
-            <span className="text-[10px] font-bold text-indigo-800 uppercase tracking-wider block">
+          <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1">
+            <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
               Experience
             </span>
-            <p className="text-sm sm:text-base font-extrabold text-indigo-700 flex items-center gap-1">
+            <p className="text-sm sm:text-base font-extrabold text-emerald-800 flex items-center gap-1">
               <Award className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{job.experienceLevel || 'Mid Level'}</span>
             </p>
@@ -179,16 +179,16 @@ export const JobDetailModal = ({
         {job.skills && job.skills.length > 0 && (
           <div className="space-y-2">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+              <Sparkles className="w-3.5 h-3.5 text-emerald-800" />
               Required Skills & Technologies
             </h3>
             <div className="flex flex-wrap gap-1.5">
               {job.skills.map((skill, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-100"
                 >
-                  <CheckCircle2 className="w-3 h-3 text-indigo-600" />
+                  <CheckCircle2 className="w-3 h-3 text-emerald-800" />
                   <span>{skill}</span>
                 </span>
               ))}
@@ -249,7 +249,7 @@ export const JobDetailModal = ({
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-emerald-800 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               title="Share job link"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -258,7 +258,7 @@ export const JobDetailModal = ({
 
             <Link
               to={`/jobs/${job.id}`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-emerald-800 text-xs font-semibold shadow-xs transition-colors"
             >
               <span>Full Page</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -281,7 +281,7 @@ export const JobDetailModal = ({
                   onClose();
                   onApply?.(job);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-100 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+                className="px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs shadow-md shadow-emerald-950/20 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Apply for Position</span>

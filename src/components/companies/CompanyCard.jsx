@@ -31,7 +31,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
         return 'bg-cyan-50 text-cyan-700 border-cyan-200';
       case 'Technology':
       default:
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200';
+        return 'bg-emerald-50 text-emerald-800 border-emerald-200';
     }
   };
 
@@ -51,7 +51,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-violet-700 text-white font-black text-sm flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-[#0A2B1A] to-emerald-800 text-white font-black text-sm flex items-center justify-center">
                   {company.logoText || company.name.substring(0, 2).toUpperCase()}
                 </div>
               )}
@@ -60,7 +60,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
             <div className="min-w-0">
               <Link
                 to={`/companies/${company.id}`}
-                className="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition-colors line-clamp-1"
+                className="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors line-clamp-1"
               >
                 {company.name}
               </Link>
@@ -87,7 +87,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
             <button
               type="button"
               onClick={() => onEdit(company)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
               title="Edit Company"
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -129,7 +129,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
                 href={company.website}
                 target="_blank"
                 rel="noreferrer"
-                className="text-indigo-600 hover:underline truncate flex items-center gap-1 font-medium"
+                className="text-emerald-800 hover:underline truncate flex items-center gap-1 font-medium"
               >
                 <span>{company.website.replace(/^https?:\/\//, '')}</span>
                 <ExternalLink className="w-3 h-3 shrink-0" />
@@ -158,7 +158,7 @@ export const CompanyCard = ({ company, onEdit, onDelete }) => {
         </span>
         <Link
           to={`/companies/${company.id}`}
-          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"
+          className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 transition-colors"
         >
           <span>View Details</span>
           <ArrowRight className="w-3.5 h-3.5" />

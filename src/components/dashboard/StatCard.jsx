@@ -8,16 +8,16 @@ export const StatCard = ({
   trendPositive = true,
   subtitle,
   badgeText,
-  colorScheme = 'indigo',
+  colorScheme = 'emerald',
   onClick,
 }) => {
   const colorStyles = {
-    indigo: {
-      bg: 'bg-indigo-50/70',
-      border: 'border-indigo-100 hover:border-indigo-300',
-      iconBg: 'bg-indigo-600 text-white shadow-indigo-200',
-      badge: 'bg-indigo-100 text-indigo-700',
-      textAccent: 'text-indigo-600',
+    darkGreen: {
+      bg: 'bg-emerald-50/70',
+      border: 'border-emerald-100 hover:border-emerald-300',
+      iconBg: 'bg-emerald-800 text-white shadow-emerald-950/20',
+      badge: 'bg-emerald-100 text-emerald-800',
+      textAccent: 'text-emerald-800',
     },
     blue: {
       bg: 'bg-blue-50/70',
@@ -56,7 +56,7 @@ export const StatCard = ({
     },
   };
 
-  const scheme = colorStyles[colorScheme] || colorStyles.indigo;
+  const scheme = colorStyles[colorScheme] || colorStyles.emerald;
 
   return (
     <div
@@ -109,7 +109,7 @@ export const StatCard = ({
         )}
 
         {onClick && (
-          <span className="text-slate-400 group-hover:text-indigo-600 flex items-center gap-0.5 font-medium ml-auto">
+          <span className="text-slate-400 group-hover:text-emerald-800 flex items-center gap-0.5 font-medium ml-auto">
             View <ArrowUpRight className="w-3 h-3" />
           </span>
         )}

@@ -14,7 +14,7 @@ export const NotFound = () => {
       </p>
       <Link
         to="/jobs"
-        className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all"
+        className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-semibold shadow-sm transition-all"
       >
         <Briefcase className="w-4 h-4" />
         Explore Jobs Directory

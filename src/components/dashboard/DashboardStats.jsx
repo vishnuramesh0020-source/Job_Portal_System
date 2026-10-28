@@ -28,7 +28,7 @@ export const DashboardStats = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-indigo-600" />
+            <BarChart3 className="w-5 h-5 text-emerald-800" />
             Dashboard Statistics & Insights
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -43,7 +43,7 @@ export const DashboardStats = ({
             onClick={() => setActiveMetric('applications')}
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               activeMetric === 'applications'
-                ? 'bg-white text-indigo-600 shadow-sm'
+                ? 'bg-white text-emerald-800 shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -54,7 +54,7 @@ export const DashboardStats = ({
             onClick={() => setActiveMetric('jobs')}
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               activeMetric === 'jobs'
-                ? 'bg-white text-indigo-600 shadow-sm'
+                ? 'bg-white text-emerald-800 shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -65,7 +65,7 @@ export const DashboardStats = ({
             onClick={() => setActiveMetric('hires')}
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               activeMetric === 'hires'
-                ? 'bg-white text-indigo-600 shadow-sm'
+                ? 'bg-white text-emerald-800 shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -114,7 +114,7 @@ export const DashboardStats = ({
                     style={{ height: `${heightPercent}%` }}
                     className={`w-full max-w-[42px] rounded-t-xl transition-all duration-500 group-hover:brightness-110 ${
                       activeMetric === 'applications'
-                        ? 'bg-gradient-to-t from-indigo-600 to-indigo-400 shadow-indigo-100'
+                        ? 'bg-gradient-to-t from-emerald-800 to-emerald-600 shadow-emerald-950/20'
                         : activeMetric === 'jobs'
                         ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-emerald-100'
                         : 'bg-gradient-to-t from-purple-600 to-purple-400 shadow-purple-100'
@@ -135,7 +135,7 @@ export const DashboardStats = ({
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <span className="text-[11px] text-slate-500 block">Avg Response Time</span>
               <strong className="text-sm font-bold text-slate-900 flex items-center justify-center gap-1 mt-0.5">
-                <Clock className="w-3.5 h-3.5 text-indigo-600" /> 24 Hours
+                <Clock className="w-3.5 h-3.5 text-emerald-800" /> 24 Hours
               </strong>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
@@ -159,7 +159,7 @@ export const DashboardStats = ({
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-600" />
+                <Layers className="w-4 h-4 text-emerald-800" />
                 Job Category Distribution
               </h3>
               <span className="text-xs font-semibold text-slate-400">Share</span>
@@ -176,8 +176,8 @@ export const DashboardStats = ({
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      style={{ width: `${cat.percentage}%` }}
-                      className={`h-full rounded-full transition-all duration-700 ${cat.color}`}
+                      style={{ width: `${Math.max(cat.percentage, 6)}%`, backgroundColor: cat.colorHex }}
+                      className={`h-full rounded-full transition-all duration-700 ${cat.color || 'bg-emerald-800'}`}
                     />
                   </div>
                 </div>
@@ -202,7 +202,10 @@ export const DashboardStats = ({
                   className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 border border-slate-100 text-xs"
                 >
                   <div className="flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full ${stage.color}`} />
+                    <div
+                      style={{ backgroundColor: stage.colorHex }}
+                      className={`w-2.5 h-2.5 rounded-full ${stage.color || 'bg-emerald-800'}`}
+                    />
                     <span className="font-medium text-slate-700">{stage.stage}</span>
                   </div>
                   <div className="flex items-center gap-2">

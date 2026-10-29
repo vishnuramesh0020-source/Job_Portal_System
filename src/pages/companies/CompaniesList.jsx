@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { companyService, INDUSTRY_OPTIONS } from '../../services/companyService';
+import { companyService, deduplicateCompanies, INDUSTRY_OPTIONS } from '../../services/companyService';
 import CompanyCard from '../../components/companies/CompanyCard';
 import CompanyFormModal from '../../components/companies/CompanyFormModal';
 import DeleteCompanyModal from '../../components/companies/DeleteCompanyModal';
@@ -63,9 +63,9 @@ export const CompaniesList = () => {
 
       const data = await companyService.getCompanies(forceRefresh);
       setCompanies(data);
-      refreshDashboardMetrics();
 
       if (forceRefresh) {
+        refreshDashboardMetrics();
         toast.success('Synced companies with third-party API!');
       }
     } catch (err) {
@@ -85,7 +85,6 @@ export const CompaniesList = () => {
       .then((data) => {
         if (isMounted) {
           setCompanies(data);
-          refreshDashboardMetrics();
         }
       })
       .catch((err) => {
@@ -101,11 +100,11 @@ export const CompaniesList = () => {
     return () => {
       isMounted = false;
     };
-  }, [refreshDashboardMetrics]);
+  }, []);
 
   // Filtered & Sorted Companies
   const filteredAndSortedCompanies = useMemo(() => {
-    let result = [...companies];
+    let result = deduplicateCompanies([...companies]);
 
     // 1. Search Filter (by Name, Location, Description)
     if (searchQuery.trim()) {

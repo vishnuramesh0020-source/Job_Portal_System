@@ -1,7 +1,7 @@
 import api from './api';
 import { formatSalaryWithSymbol } from '../utils/formatSalary';
-import { mapApiPostToJob } from './jobService';
-import { mapApiUserToCompany } from './companyService';
+import { mapApiPostToJob, deduplicateJobs } from './jobService';
+import { mapApiUserToCompany, deduplicateCompanies } from './companyService';
 
 const COMPANIES_KEY = 'job_portal_companies';
 const JOBS_KEY = 'job_portal_jobs';
@@ -28,6 +28,48 @@ const setToStorage = (key, value) => {
   } catch (e) {
     console.error(`Error writing ${key} to storage:`, e);
   }
+};
+
+// Strict deduplication for applications
+export const deduplicateApplications = (appsList) => {
+  if (!Array.isArray(appsList)) return [];
+  const seenIds = new Set();
+  const seenCombos = new Set();
+
+  return appsList.filter((app) => {
+    if (!app) return false;
+    const idKey = String(app.id || '').trim();
+    const candidateEmail = (app.candidateEmail || '').trim().toLowerCase();
+    const jobId = String(app.jobId || '').trim();
+    const comboKey = `${candidateEmail}__${jobId}`;
+
+    if (idKey && seenIds.has(idKey)) return false;
+    if (candidateEmail && jobId && seenCombos.has(comboKey)) return false;
+
+    if (idKey) seenIds.add(idKey);
+    if (candidateEmail && jobId) seenCombos.add(comboKey);
+    return true;
+  });
+};
+
+// Strict deduplication for candidates
+export const deduplicateCandidates = (candList) => {
+  if (!Array.isArray(candList)) return [];
+  const seenIds = new Set();
+  const seenEmails = new Set();
+
+  return candList.filter((cand) => {
+    if (!cand) return false;
+    const idKey = String(cand.id || '').trim();
+    const emailKey = (cand.email || '').trim().toLowerCase();
+
+    if (idKey && seenIds.has(idKey)) return false;
+    if (emailKey && seenEmails.has(emailKey)) return false;
+
+    if (idKey) seenIds.add(idKey);
+    if (emailKey) seenEmails.add(emailKey);
+    return true;
+  });
 };
 
 // Map third-party API comments (JSONPlaceholder /comments) into candidate applications
@@ -279,10 +321,10 @@ const calculateEmployerHiringVolume = (companies, jobs) => {
 export const dashboardService = {
   // 1. Get Synchronous Metrics from Cache
   getDashboardData: () => {
-    const companies = getFromStorage(COMPANIES_KEY, []);
-    const jobs = getFromStorage(JOBS_KEY, []);
-    const candidates = getFromStorage(CANDIDATES_KEY, []);
-    const applications = getFromStorage(APPLICATIONS_KEY, []);
+    const companies = deduplicateCompanies(getFromStorage(COMPANIES_KEY, []));
+    const jobs = deduplicateJobs(getFromStorage(JOBS_KEY, []));
+    const candidates = deduplicateCandidates(getFromStorage(CANDIDATES_KEY, []));
+    const applications = deduplicateApplications(getFromStorage(APPLICATIONS_KEY, []));
     const savedJobIds = getFromStorage(SAVED_JOBS_KEY, []);
     const recentActivities = getFromStorage(ACTIVITIES_KEY, []);
 
@@ -328,13 +370,14 @@ export const dashboardService = {
   },
 
   // 2. Fetch and hydrate all metrics dynamically directly from third-party APIs
-  getDashboardDataAsync: async () => {
+  getDashboardDataAsync: async (options = {}) => {
     try {
+      const apiConfig = options.bypassCache ? { bypassCache: true } : {};
       const [postsRes, usersRes, commentsRes, todosRes] = await Promise.all([
-        api.get('/posts?_limit=24'),
-        api.get('/users'),
-        api.get('/comments?_limit=35'),
-        api.get('/todos?_limit=20'),
+        api.get('/posts?_limit=24', apiConfig),
+        api.get('/users', apiConfig),
+        api.get('/comments?_limit=35', apiConfig),
+        api.get('/todos?_limit=20', apiConfig),
       ]);
 
       const apiPosts = postsRes.data || [];
@@ -364,10 +407,10 @@ export const dashboardService = {
       );
       const userJobMods = new Map();
       storedJobs.forEach((j) => userJobMods.set(String(j.id), j));
-      const combinedJobs = [
+      const combinedJobs = deduplicateJobs([
         ...userCreatedJobs,
         ...mappedJobs.map((m) => userJobMods.get(String(m.id)) || m),
-      ];
+      ]);
 
       // Overlay user-created/modified companies
       const storedCompanies = getFromStorage(COMPANIES_KEY, []);
@@ -376,10 +419,10 @@ export const dashboardService = {
       );
       const userCompMods = new Map();
       storedCompanies.forEach((c) => userCompMods.set(String(c.id), c));
-      const combinedCompanies = [
+      const combinedCompanies = deduplicateCompanies([
         ...userCreatedCompanies,
         ...mappedCompanies.map((m) => userCompMods.get(String(m.id)) || m),
-      ];
+      ]);
 
       // Map dynamic applications from API comments
       const apiApplications = mapApiCommentsToApplications(apiComments, combinedJobs);
@@ -389,10 +432,12 @@ export const dashboardService = {
       );
       const userAppMods = new Map();
       storedApps.forEach((a) => userAppMods.set(String(a.id), a));
-      const combinedApplications = [
+      const combinedApplications = deduplicateApplications([
         ...userCreatedApps,
         ...apiApplications.map((m) => userAppMods.get(String(m.id)) || m),
-      ];
+      ]);
+
+      const combinedCandidates = deduplicateCandidates(mappedCandidates);
 
       // Map saved jobs from API todos + local storage
       const storedSaved = getFromStorage(SAVED_JOBS_KEY, []);
@@ -423,7 +468,7 @@ export const dashboardService = {
       // Save to storage cache for fast subsequent renders
       setToStorage(COMPANIES_KEY, combinedCompanies);
       setToStorage(JOBS_KEY, combinedJobs);
-      setToStorage(CANDIDATES_KEY, mappedCandidates);
+      setToStorage(CANDIDATES_KEY, combinedCandidates);
       setToStorage(APPLICATIONS_KEY, combinedApplications);
       setToStorage(SAVED_JOBS_KEY, activeSavedIds);
       setToStorage(ACTIVITIES_KEY, activities);
@@ -447,7 +492,7 @@ export const dashboardService = {
         totalCompanies: combinedCompanies.length,
         totalJobs: combinedJobs.length,
         activeJobPostings: activeJobs.length,
-        totalCandidates: mappedCandidates.length,
+        totalCandidates: combinedCandidates.length,
         totalApplications: combinedApplications.length,
         savedJobsCount: activeSavedIds.length,
         savedJobs: savedJobsList,
@@ -456,7 +501,7 @@ export const dashboardService = {
         companies: combinedCompanies,
         jobs: combinedJobs,
         activeJobs,
-        candidates: mappedCandidates,
+        candidates: combinedCandidates,
         applications: combinedApplications,
         monthlyTrends: calculateMonthlyTrends(combinedJobs, combinedApplications),
         categoryBreakdown: calculateCategoryBreakdown(combinedJobs),

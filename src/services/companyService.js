@@ -70,11 +70,32 @@ export const mapApiUserToCompany = (user, index) => {
   };
 };
 
-// Safe storage access
+// Strict deduplication by ID and Name to ensure 0 duplicate companies
+export const deduplicateCompanies = (companiesList) => {
+  if (!Array.isArray(companiesList)) return [];
+  const seenIds = new Set();
+  const seenNames = new Set();
+
+  return companiesList.filter((comp) => {
+    if (!comp) return false;
+    const idKey = String(comp.id || '').trim();
+    const nameKey = (comp.name || '').trim().toLowerCase();
+
+    if (idKey && seenIds.has(idKey)) return false;
+    if (nameKey && seenNames.has(nameKey)) return false;
+
+    if (idKey) seenIds.add(idKey);
+    if (nameKey) seenNames.add(nameKey);
+    return true;
+  });
+};
+
+// Safe storage access with auto-deduplication
 const getStoredCompanies = () => {
   try {
     const raw = localStorage.getItem(COMPANIES_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? deduplicateCompanies(parsed) : [];
   } catch (e) {
     console.error('Error reading companies from storage:', e);
     return [];
@@ -83,7 +104,8 @@ const getStoredCompanies = () => {
 
 const setStoredCompanies = (companies) => {
   try {
-    localStorage.setItem(COMPANIES_STORAGE_KEY, JSON.stringify(companies));
+    const clean = deduplicateCompanies(companies);
+    localStorage.setItem(COMPANIES_STORAGE_KEY, JSON.stringify(clean));
   } catch (e) {
     console.error('Error saving companies to storage:', e);
   }
@@ -118,7 +140,7 @@ export const companyService = {
       stored.forEach((c) => userModifiedMap.set(String(c.id), c));
 
       const merged = apiCompanies.map((ac) => userModifiedMap.get(String(ac.id)) || ac);
-      const combined = [...userAdded, ...merged];
+      const combined = deduplicateCompanies([...userAdded, ...merged]);
 
       setStoredCompanies(combined);
       return combined;
@@ -168,7 +190,7 @@ export const companyService = {
       console.warn('Third-party API POST simulated locally:', e);
     }
 
-    const currentCompanies = (await companyService.getCompanies()) || [];
+    const currentCompanies = getStoredCompanies();
     const newId = `comp-${Date.now()}`;
 
     const newCompany = {
@@ -216,7 +238,7 @@ export const companyService = {
       console.warn('Third-party API PUT simulated locally:', e);
     }
 
-    const currentCompanies = (await companyService.getCompanies()) || [];
+    const currentCompanies = getStoredCompanies();
     const index = currentCompanies.findIndex((c) => String(c.id) === String(id));
 
     if (index === -1) {
@@ -266,7 +288,7 @@ export const companyService = {
       console.warn('Third-party API DELETE simulated locally:', e);
     }
 
-    const currentCompanies = (await companyService.getCompanies()) || [];
+    const currentCompanies = getStoredCompanies();
     const target = currentCompanies.find((c) => String(c.id) === String(id));
     const filtered = currentCompanies.filter((c) => String(c.id) !== String(id));
 

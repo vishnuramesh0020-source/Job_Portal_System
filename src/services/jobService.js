@@ -167,13 +167,35 @@ export const mapApiPostToJob = (post, index) => {
   };
 };
 
+// Strict deduplication by ID and Title+Company to guarantee 0 duplicate jobs
+export const deduplicateJobs = (jobsList) => {
+  if (!Array.isArray(jobsList)) return [];
+  const seenIds = new Set();
+  const seenCombos = new Set();
+
+  return jobsList.filter((job) => {
+    if (!job) return false;
+    const idKey = String(job.id || '').trim();
+    const title = (job.title || '').trim().toLowerCase();
+    const company = (job.company || '').trim().toLowerCase();
+    const comboKey = `${title}__${company}`;
+
+    if (idKey && seenIds.has(idKey)) return false;
+    if (title && company && seenCombos.has(comboKey)) return false;
+
+    if (idKey) seenIds.add(idKey);
+    if (title && company) seenCombos.add(comboKey);
+    return true;
+  });
+};
+
 // Safely retrieve stored jobs from localStorage
 const getStoredJobs = () => {
   try {
     const raw = localStorage.getItem(JOBS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(normalizeJob) : [];
+    return Array.isArray(parsed) ? deduplicateJobs(parsed.map(normalizeJob)) : [];
   } catch (error) {
     console.error('Failed to parse jobs from localStorage:', error);
     return [];
@@ -182,7 +204,8 @@ const getStoredJobs = () => {
 
 const setStoredJobs = (jobs) => {
   try {
-    localStorage.setItem(JOBS_STORAGE_KEY, JSON.stringify(jobs));
+    const clean = deduplicateJobs(jobs);
+    localStorage.setItem(JOBS_STORAGE_KEY, JSON.stringify(clean));
   } catch (error) {
     console.error('Failed to save jobs to localStorage:', error);
   }
@@ -249,7 +272,7 @@ export const jobService = {
       stored.forEach((j) => userModifiedMap.set(String(j.id), j));
 
       const merged = mappedApiJobs.map((m) => userModifiedMap.get(String(m.id)) || m);
-      const combined = [...userAdded, ...merged];
+      const combined = deduplicateJobs([...userAdded, ...merged]);
 
       setStoredJobs(combined);
       return combined;
@@ -297,7 +320,7 @@ export const jobService = {
     }
 
     const currentJobs = getStoredJobs();
-    const newId = `job-api-${apiResponse?.data?.id || Date.now()}`;
+    const newId = `job-api-${Date.now()}`;
 
     let parsedSkills = jobData.skills;
     if (typeof parsedSkills === 'string') {

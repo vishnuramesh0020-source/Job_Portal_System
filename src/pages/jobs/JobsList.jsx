@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   jobService,
+  deduplicateJobs,
   JOB_CATEGORIES,
   EMPLOYMENT_TYPES,
   EXPERIENCE_LEVELS,
@@ -117,7 +118,6 @@ export const JobsList = () => {
       .then((data) => {
         if (isMounted) {
           setJobs(data);
-          refreshDashboardMetrics();
         }
       })
       .catch(() => {
@@ -130,7 +130,7 @@ export const JobsList = () => {
     return () => {
       isMounted = false;
     };
-  }, [refreshDashboardMetrics]);
+  }, []);
 
   // Extract distinct locations from job data
   const availableLocations = useMemo(() => {
@@ -147,7 +147,7 @@ export const JobsList = () => {
 
   // Filtered & Sorted Jobs
   const filteredAndSortedJobs = useMemo(() => {
-    let result = [...jobs];
+    let result = deduplicateJobs([...jobs]);
 
     // 1. Search Query (Search Jobs by Title, Company, Location, Skills, Description)
     if (searchQuery.trim()) {

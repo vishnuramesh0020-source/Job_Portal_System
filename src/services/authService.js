@@ -90,7 +90,7 @@ export const authService = {
   login: async ({ email, password, role }) => {
     // Perform real third-party API verification call
     try {
-      await api.get('/users?_limit=5');
+      await api.get('/users');
     } catch (e) {
       console.warn('Third-party API ping fallback:', e);
     }
@@ -241,7 +241,7 @@ export const authService = {
   // Verify email for password recovery with Third-Party API verification
   verifyEmail: async (email) => {
     try {
-      await api.get('/users?_limit=3');
+      await api.get('/users');
     } catch (e) {
       console.warn('API ping in verifyEmail:', e);
     }

@@ -7,12 +7,17 @@ export const DashboardProvider = ({ children }) => {
   const [data, setData] = useState(() => dashboardService.getDashboardData());
   const [loading, setLoading] = useState(false);
 
-  // Refresh dashboard metrics from third-party API & storage
-  const refreshData = useCallback(async () => {
-    setLoading(true);
-    const updated = await dashboardService.getDashboardDataAsync();
-    setData(updated);
-    setLoading(false);
+  // Refresh dashboard metrics from storage cache (0 network requests), or from network if explicitly requested
+  const refreshData = useCallback(async (options = {}) => {
+    if (options.network) {
+      setLoading(true);
+      const updated = await dashboardService.getDashboardDataAsync(options);
+      setData(updated);
+      setLoading(false);
+    } else {
+      // Instant synchronization from storage cache - 0 network calls!
+      setData(dashboardService.getDashboardData());
+    }
   }, []);
 
   // Hydrate third-party API metrics on initial mount

@@ -106,7 +106,7 @@ export const Dashboard = () => {
 
             <button
               type="button"
-              onClick={refreshData}
+              onClick={() => refreshData({ bypassCache: true })}
               disabled={loading}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/10 transition-all cursor-pointer"
               title="Refresh live API data"

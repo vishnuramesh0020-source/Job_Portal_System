@@ -71,10 +71,10 @@ export const Login = () => {
     setAuthError('');
     if (role === 'candidate') {
       setValue('email', 'candidate@jobportal.com', { shouldValidate: true });
-      setValue('password', 'Password123', { shouldValidate: true });
+      setValue('password', 'Password123!', { shouldValidate: true });
     } else {
       setValue('email', 'recruiter@jobportal.com', { shouldValidate: true });
-      setValue('password', 'Password123', { shouldValidate: true });
+      setValue('password', 'Password123!', { shouldValidate: true });
     }
   };
 

@@ -27,6 +27,7 @@ export const Navbar = () => {
   }
 
   const handleLogout = () => {
+    setIsMobileMenuOpen(false);
     logout();
     navigate('/login');
   };

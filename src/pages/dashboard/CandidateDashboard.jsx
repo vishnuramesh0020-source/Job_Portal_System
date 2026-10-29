@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatSalaryWithSymbol } from '../../utils/formatSalary';
 import {
   getCandidateProfile,
@@ -71,6 +71,7 @@ const formatAppliedDate = (dateStr) => {
 };
 
 export const CandidateDashboard = () => {
+  const navigate = useNavigate();
   const { user, logout, updateUserProfile } = useAuth();
   const {
     totalCompanies,
@@ -243,7 +244,10 @@ export const CandidateDashboard = () => {
 
             <button
               type="button"
-              onClick={logout}
+              onClick={() => {
+                logout();
+                navigate('/login');
+              }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />

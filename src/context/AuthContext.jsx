@@ -4,6 +4,8 @@ import {
   authService,
   getCurrentSession,
   initializeAuthStorage,
+  saveCurrentSession,
+  clearCurrentSession,
 } from '../services/authService';
 import { toast } from 'react-toastify';
 
@@ -92,7 +94,12 @@ export const AuthProvider = ({ children }) => {
 
   // Handle Logout
   const logout = () => {
-    authService.logout();
+    try {
+      authService.logout();
+    } catch (e) {
+      console.warn('Error during logout:', e);
+    }
+    clearCurrentSession();
     setUser(null);
     toast.info('You have been logged out.');
   };

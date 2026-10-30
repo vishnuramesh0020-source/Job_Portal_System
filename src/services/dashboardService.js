@@ -1,7 +1,8 @@
 import api from './api';
 import { formatSalaryWithSymbol } from '../utils/formatSalary';
-import { mapApiPostToJob, deduplicateJobs } from './jobService';
-import { mapApiUserToCompany, deduplicateCompanies } from './companyService';
+import { mapApiPostToJob, deduplicateJobs, isLegacyMockJob, normalizeJob } from './jobService';
+import { mapApiUserToCompany, deduplicateCompanies, isLegacyMockCompany, normalizeCompany } from './companyService';
+import { mapApiUserToCandidate } from './candidateService';
 
 const COMPANIES_KEY = 'job_portal_companies';
 const JOBS_KEY = 'job_portal_jobs';
@@ -321,8 +322,18 @@ const calculateEmployerHiringVolume = (companies, jobs) => {
 export const dashboardService = {
   // 1. Get Synchronous Metrics from Cache
   getDashboardData: () => {
-    const companies = deduplicateCompanies(getFromStorage(COMPANIES_KEY, []));
-    const jobs = deduplicateJobs(getFromStorage(JOBS_KEY, []));
+    const rawCompanies = getFromStorage(COMPANIES_KEY, []);
+    const companies = deduplicateCompanies(
+      rawCompanies
+        .filter((c) => !isLegacyMockCompany(c))
+        .map((c, idx) => normalizeCompany(c, idx))
+    );
+    const rawJobs = getFromStorage(JOBS_KEY, []);
+    const jobs = deduplicateJobs(
+      rawJobs
+        .filter((j) => !isLegacyMockJob(j))
+        .map(normalizeJob)
+    );
     const candidates = deduplicateCandidates(getFromStorage(CANDIDATES_KEY, []));
     const applications = deduplicateApplications(getFromStorage(APPLICATIONS_KEY, []));
     const savedJobIds = getFromStorage(SAVED_JOBS_KEY, []);
@@ -390,39 +401,35 @@ export const dashboardService = {
       const mappedCompanies = apiUsers.map((user, idx) => mapApiUserToCompany(user, idx));
 
       // Map candidates from API users
-      const mappedCandidates = apiUsers.map((user) => ({
-        id: `cand-api-${user.id}`,
-        apiId: user.id,
-        fullName: user.name,
-        email: user.email.toLowerCase(),
-        phone: user.phone,
-        location: `${user.address?.city || 'Bengaluru'}, India`,
-        title: user.company?.bs || 'Software Engineer',
-      }));
+      const mappedCandidates = apiUsers.map((user, idx) => mapApiUserToCandidate(user, idx));
 
       // Overlay user-created/modified jobs from local cache
       const storedJobs = getFromStorage(JOBS_KEY, []);
       const userCreatedJobs = storedJobs.filter(
-        (j) => !mappedJobs.some((m) => String(m.id) === String(j.id))
+        (j) => !isLegacyMockJob(j) && !mappedJobs.some((m) => String(m.id) === String(j.id))
       );
       const userJobMods = new Map();
-      storedJobs.forEach((j) => userJobMods.set(String(j.id), j));
+      storedJobs.forEach((j) => {
+        if (!isLegacyMockJob(j)) userJobMods.set(String(j.id), j);
+      });
       const combinedJobs = deduplicateJobs([
         ...userCreatedJobs,
         ...mappedJobs.map((m) => userJobMods.get(String(m.id)) || m),
-      ]);
+      ]).map(normalizeJob);
 
       // Overlay user-created/modified companies
       const storedCompanies = getFromStorage(COMPANIES_KEY, []);
       const userCreatedCompanies = storedCompanies.filter(
-        (c) => !mappedCompanies.some((m) => String(m.id) === String(c.id))
+        (c) => !isLegacyMockCompany(c) && !mappedCompanies.some((m) => String(m.id) === String(c.id))
       );
       const userCompMods = new Map();
-      storedCompanies.forEach((c) => userCompMods.set(String(c.id), c));
+      storedCompanies.forEach((c) => {
+        if (!isLegacyMockCompany(c)) userCompMods.set(String(c.id), c);
+      });
       const combinedCompanies = deduplicateCompanies([
         ...userCreatedCompanies,
         ...mappedCompanies.map((m) => userCompMods.get(String(m.id)) || m),
-      ]);
+      ]).map((c, idx) => normalizeCompany(c, idx));
 
       // Map dynamic applications from API comments
       const apiApplications = mapApiCommentsToApplications(apiComments, combinedJobs);

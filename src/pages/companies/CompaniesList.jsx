@@ -4,6 +4,7 @@ import { companyService, deduplicateCompanies, INDUSTRY_OPTIONS } from '../../se
 import CompanyCard from '../../components/companies/CompanyCard';
 import CompanyFormModal from '../../components/companies/CompanyFormModal';
 import DeleteCompanyModal from '../../components/companies/DeleteCompanyModal';
+import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import { toast } from 'react-toastify';
 import {
@@ -17,6 +18,8 @@ import {
 } from 'lucide-react';
 
 export const CompaniesList = () => {
+  const { user } = useAuth();
+  const isRecruiter = user?.role === 'recruiter';
   const { refreshData: refreshDashboardMetrics } = useDashboard();
 
   // Data states
@@ -233,14 +236,16 @@ export const CompaniesList = () => {
               <span>{isRefreshing ? 'Syncing...' : 'Sync API'}</span>
             </button>
 
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Add Company</span>
-            </button>
+            {isRecruiter && (
+              <button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Add Company</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -440,8 +445,9 @@ export const CompaniesList = () => {
             <CompanyCard
               key={comp.id}
               company={comp}
-              onEdit={handleOpenEditModal}
-              onDelete={handleOpenDeleteModal}
+              onEdit={isRecruiter ? handleOpenEditModal : undefined}
+              onDelete={isRecruiter ? handleOpenDeleteModal : undefined}
+              canManage={isRecruiter}
             />
           ))}
         </div>

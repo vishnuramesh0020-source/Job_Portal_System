@@ -394,16 +394,18 @@ export const JobsList = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Post a Job</span>
-            </button>
-          </div>
+          {user?.role === 'recruiter' && (
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold shadow-md shadow-emerald-950/30 transition-all cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Post a Job</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -842,13 +844,15 @@ export const JobsList = () => {
             >
               Clear All Filters
             </button>
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              className="px-4 py-2 rounded-xl bg-emerald-800 text-white font-semibold text-xs hover:bg-emerald-900 transition-colors cursor-pointer"
-            >
-              Post a New Job
-            </button>
+            {user?.role === 'recruiter' && (
+              <button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="px-4 py-2 rounded-xl bg-emerald-800 text-white font-semibold text-xs hover:bg-emerald-900 transition-colors cursor-pointer"
+              >
+                Post a New Job
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -856,17 +860,18 @@ export const JobsList = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
           {paginatedJobs.map((job) => {
             const isSaved = savedJobIds.some((sId) => String(sId) === String(job.id));
+            const isRecruiter = user?.role === 'recruiter';
             return (
               <JobCard
                 key={job.id}
                 job={job}
                 isSaved={isSaved}
-                onEdit={handleOpenEditModal}
-                onDelete={handleOpenDeleteModal}
+                onEdit={isRecruiter ? handleOpenEditModal : undefined}
+                onDelete={isRecruiter ? handleOpenDeleteModal : undefined}
                 onApply={handleOpenApplyModal}
                 onToggleSave={toggleSaveJob}
                 onQuickView={handleOpenQuickView}
-                canManage={true}
+                canManage={isRecruiter}
               />
             );
           })}

@@ -8,6 +8,7 @@ import {
   ChevronRight,
   User,
   Building2,
+  Users,
   Menu,
   X,
   BarChart3,
@@ -43,10 +44,18 @@ export const Navbar = () => {
   const isJobsActive =
     location.pathname.startsWith('/jobs') || location.pathname.startsWith('/search') || location.pathname === '/';
   const isCompaniesActive = location.pathname.startsWith('/companies');
+  const isCandidatesActive =
+    location.pathname === '/candidates' || location.pathname.startsWith('/candidates');
   const isDashboardActive = location.pathname === '/dashboard';
   const isReportsActive = location.pathname.startsWith('/reports');
   const isPortalActive =
-    location.pathname.startsWith('/candidate') || location.pathname.startsWith('/recruiter');
+    location.pathname.startsWith('/candidate/dashboard') ||
+    location.pathname.startsWith('/candidate/profile') ||
+    location.pathname.startsWith('/recruiter');
+
+  // Candidate users have a focused candidate navigation.
+  // Recruiters retain their complete navigation everywhere (including when checking /candidates).
+  const isCandidateRole = user?.role === 'candidate';
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs w-full">
@@ -91,31 +100,49 @@ export const Navbar = () => {
                 Companies
               </Link>
 
+              {!isCandidateRole && (
+                <Link
+                  to="/candidates"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
+                    isCandidatesActive
+                      ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                      : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
+                  }`}
+                >
+                  <Users className="w-4 h-4 text-emerald-800" />
+                  Candidates
+                </Link>
+              )}
+
               {isAuthenticated && (
                 <>
-                  <Link
-                    to="/dashboard"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
-                      isDashboardActive
-                        ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
-                        : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
-                    }`}
-                  >
-                    <LayoutDashboard className="w-4 h-4 text-emerald-800" />
-                    Dashboard
-                  </Link>
+                  {!isCandidateRole && (
+                    <>
+                      <Link
+                        to="/dashboard"
+                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
+                          isDashboardActive
+                            ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                            : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
+                        }`}
+                      >
+                        <LayoutDashboard className="w-4 h-4 text-emerald-800" />
+                        Dashboard
+                      </Link>
 
-                  <Link
-                    to="/reports"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
-                      isReportsActive
-                        ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
-                        : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
-                    }`}
-                  >
-                    <BarChart3 className="w-4 h-4 text-emerald-800" />
-                    Reports
-                  </Link>
+                      <Link
+                        to="/reports"
+                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all ${
+                          isReportsActive
+                            ? 'bg-emerald-50 text-emerald-900 border border-emerald-200/60 shadow-xs'
+                            : 'text-slate-600 hover:text-emerald-900 hover:bg-emerald-50/40'
+                        }`}
+                      >
+                        <BarChart3 className="w-4 h-4 text-emerald-800" />
+                        Reports
+                      </Link>
+                    </>
+                  )}
 
                   <Link
                     to={roleDashboardPath}
@@ -126,7 +153,7 @@ export const Navbar = () => {
                     }`}
                   >
                     <User className="w-4 h-4 text-emerald-800" />
-                    {user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Profile'}
+                    {user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Portal'}
                   </Link>
                 </>
               )}
@@ -139,7 +166,7 @@ export const Navbar = () => {
               <div className="flex items-center gap-2 sm:gap-3">
                 {/* User Info Capsule */}
                 <Link
-                  to="/dashboard"
+                  to={roleDashboardPath}
                   className="hidden sm:flex items-center gap-2.5 py-1 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 transition-colors border border-slate-200"
                 >
                   <div className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold shadow-xs">
@@ -261,31 +288,49 @@ export const Navbar = () => {
               <span>Verified Companies</span>
             </Link>
 
+            {!isCandidateRole && (
+              <Link
+                to="/candidates"
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                  isCandidatesActive
+                    ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <Users className="w-4 h-4 text-emerald-800" />
+                <span>Candidate Talent</span>
+              </Link>
+            )}
+
             {isAuthenticated && (
               <>
-                <Link
-                  to="/dashboard"
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isDashboardActive
-                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <LayoutDashboard className="w-4 h-4 text-emerald-800" />
-                  <span>Master Dashboard</span>
-                </Link>
+                {!isCandidateRole && (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isDashboardActive
+                          ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-emerald-800" />
+                      <span>Master Dashboard</span>
+                    </Link>
 
-                <Link
-                  to="/reports"
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isReportsActive
-                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4 text-emerald-800" />
-                  <span>Reports & Analytics</span>
-                </Link>
+                    <Link
+                      to="/reports"
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isReportsActive
+                          ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/60'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <BarChart3 className="w-4 h-4 text-emerald-800" />
+                      <span>Reports & Analytics</span>
+                    </Link>
+                  </>
+                )}
 
                 <Link
                   to={roleDashboardPath}
@@ -296,7 +341,7 @@ export const Navbar = () => {
                   }`}
                 >
                   <User className="w-4 h-4 text-emerald-800" />
-                  <span>{user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Profile'}</span>
+                  <span>{user?.role === 'recruiter' ? 'Recruiter Portal' : 'Candidate Portal'}</span>
                 </Link>
               </>
             )}

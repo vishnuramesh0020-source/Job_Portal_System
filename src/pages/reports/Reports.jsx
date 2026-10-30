@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import { formatSalaryWithSymbol } from '../../utils/formatSalary';
 import {
@@ -29,6 +30,7 @@ import {
 } from 'lucide-react';
 
 export const Reports = () => {
+  const { user } = useAuth();
   const {
     totalCompanies,
     totalJobs,
@@ -79,6 +81,11 @@ export const Reports = () => {
   const handlePrint = () => {
     window.print();
   };
+
+  // Candidates manage their workspace in Candidate Portal
+  if (user?.role === 'candidate') {
+    return <Navigate to="/candidate/dashboard" replace />;
+  }
 
   return (
     <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
@@ -160,7 +167,10 @@ export const Reports = () => {
 
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Card 1: Total Job Postings */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-emerald-300 hover:-translate-y-0.5 transition-all">
+          <Link
+            to="/jobs"
+            className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-emerald-300 hover:-translate-y-0.5 transition-all block cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
                 Total Job Postings
@@ -178,10 +188,13 @@ export const Reports = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">All registered openings</p>
-          </div>
+          </Link>
 
           {/* Card 2: Total Companies */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-amber-300 hover:-translate-y-0.5 transition-all">
+          <Link
+            to="/companies"
+            className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-amber-300 hover:-translate-y-0.5 transition-all block cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
                 Total Companies
@@ -199,10 +212,13 @@ export const Reports = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">Hiring partner employers</p>
-          </div>
+          </Link>
 
           {/* Card 3: Total Candidates */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-purple-300 hover:-translate-y-0.5 transition-all">
+          <Link
+            to="/candidates"
+            className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-purple-300 hover:-translate-y-0.5 transition-all block cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
                 Total Candidates
@@ -220,7 +236,7 @@ export const Reports = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">Registered talent roster</p>
-          </div>
+          </Link>
 
           {/* Card 4: Total Applications */}
           <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md hover:border-blue-300 hover:-translate-y-0.5 transition-all">

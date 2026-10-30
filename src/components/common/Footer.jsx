@@ -1,15 +1,19 @@
 import { Briefcase } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const currentYear = new Date().getFullYear();
 
 export const Footer = () => {
   const location = useLocation();
+  const { user } = useAuth();
 
   // Hide footer on Login page to ensure exact single-screen no-scroll layout
   if (location.pathname === '/login') {
     return null;
   }
+
+  const isCandidateRole = user?.role === 'candidate';
 
   return (
     <footer className="bg-white border-t border-slate-200 mt-auto w-full">
@@ -32,12 +36,29 @@ export const Footer = () => {
             <Link to="/companies" className="hover:text-emerald-800 transition-colors">
               Companies
             </Link>
-            <Link to="/dashboard" className="hover:text-emerald-800 transition-colors">
-              Dashboard
-            </Link>
-            <Link to="/reports" className="hover:text-emerald-800 transition-colors">
-              Reports
-            </Link>
+            {!isCandidateRole && (
+              <>
+                <Link to="/candidates" className="hover:text-emerald-800 transition-colors">
+                  Candidates
+                </Link>
+                <Link to="/dashboard" className="hover:text-emerald-800 transition-colors">
+                  Dashboard
+                </Link>
+                <Link to="/reports" className="hover:text-emerald-800 transition-colors">
+                  Reports
+                </Link>
+              </>
+            )}
+            {user?.role === 'candidate' && (
+              <Link to="/candidate/dashboard" className="hover:text-emerald-800 transition-colors">
+                Candidate Portal
+              </Link>
+            )}
+            {user?.role === 'recruiter' && (
+              <Link to="/recruiter/dashboard" className="hover:text-emerald-800 transition-colors">
+                Recruiter Portal
+              </Link>
+            )}
             <Link to="/login" className="hover:text-emerald-800 transition-colors">
               Login
             </Link>

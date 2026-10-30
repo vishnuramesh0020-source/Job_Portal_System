@@ -264,25 +264,27 @@ export const JobDetails = () => {
               </div>
             )}
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Edit Job</span>
-              </button>
+            {user?.role === 'recruiter' && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit Job</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Delete</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

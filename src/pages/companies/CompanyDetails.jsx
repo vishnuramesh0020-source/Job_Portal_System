@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { companyService } from '../../services/companyService';
+import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import CompanyFormModal from '../../components/companies/CompanyFormModal';
 import DeleteCompanyModal from '../../components/companies/DeleteCompanyModal';
@@ -31,6 +32,7 @@ import {
 export const CompanyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { activeJobs, toggleSaveJob, applyToJob, savedJobs, refreshData: refreshDashboardMetrics } = useDashboard();
 
   const [company, setCompany] = useState(null);
@@ -144,24 +146,26 @@ export const CompanyDetails = () => {
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Cover Strip */}
         <div className="h-44 sm:h-52 bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 relative">
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-semibold backdrop-blur-sm transition-colors cursor-pointer"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              Edit Profile
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-semibold backdrop-blur-sm transition-colors cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              Delete
-            </button>
-          </div>
+          {user?.role === 'recruiter' && (
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-semibold backdrop-blur-sm transition-colors cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                Edit Profile
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-semibold backdrop-blur-sm transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                Delete
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Profile Info Section */}

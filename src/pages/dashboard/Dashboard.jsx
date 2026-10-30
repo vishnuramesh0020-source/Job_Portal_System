@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboard } from '../../hooks/useDashboard';
 import StatCard from '../../components/dashboard/StatCard';
@@ -78,6 +78,11 @@ export const Dashboard = () => {
     setSelectedJobForApply(job || activeJobs[0]);
     setIsQuickApplyOpen(true);
   };
+
+  // Candidates manage their workspace exclusively in Candidate Portal
+  if (user?.role === 'candidate') {
+    return <Navigate to="/candidate/dashboard" replace />;
+  }
 
   return (
     <div className="w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
@@ -246,6 +251,9 @@ export const Dashboard = () => {
                 trend="+24%"
                 trendPositive={true}
                 subtitle="Talent Roster"
+                onClick={() =>
+                  navigate(user?.role === 'candidate' ? '/candidate/dashboard' : '/candidates')
+                }
               />
 
               {/* 5. Total Applications */}
@@ -351,14 +359,16 @@ export const Dashboard = () => {
                 <option value="Security">Security</option>
               </select>
 
-              <button
-                type="button"
-                onClick={() => setIsPostJobOpen(true)}
-                className="py-1.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                Post Job
-              </button>
+              {user?.role === 'recruiter' && (
+                <button
+                  type="button"
+                  onClick={() => setIsPostJobOpen(true)}
+                  className="py-1.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  Post Job
+                </button>
+              )}
             </div>
           </div>
 

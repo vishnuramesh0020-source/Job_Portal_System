@@ -90,21 +90,106 @@ export const deduplicateCompanies = (companiesList) => {
   });
 };
 
-// Safe storage access with auto-deduplication
-const getStoredCompanies = () => {
+// Legacy mock company names from old prototype stages
+const LEGACY_MOCK_NAMES = new Set([
+  'techcorp solutions',
+  'cloudsphere global',
+  'digital horizon labs',
+  'nextgen ai research',
+  'apex healthtech',
+  'cybershield systems',
+  'omnidesign studio',
+  'vanguard media group',
+]);
+
+// Identify legacy mock companies that should not pollute the pure API directory
+export const isLegacyMockCompany = (comp) => {
+  if (!comp) return true;
+  const idStr = String(comp.id || '').trim();
+  // Filter out legacy mock IDs like comp-1 to comp-20
+  if (/^comp-[0-9]{1,2}$/.test(idStr)) return true;
+  const nameLower = (comp.name || '').trim().toLowerCase();
+  // Legacy mock names without valid API or timestamped user-created ID
+  if (LEGACY_MOCK_NAMES.has(nameLower) && !idStr.startsWith('comp-api-') && !idStr.startsWith('comp-17')) {
+    return true;
+  }
+  return false;
+};
+
+// Normalize every company object so all cards have complete, uniform, robust properties
+export const normalizeCompany = (c, index = 0) => {
+  const name = (c.name || 'Verified Organization').trim();
+  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'company';
+  const logo =
+    c.logo && typeof c.logo === 'string' && c.logo.startsWith('http')
+      ? c.logo
+      : defaultLogos[index % defaultLogos.length];
+  const logoText = (c.logoText || name.substring(0, 2)).toUpperCase();
+  const employees = c.employees
+    ? String(c.employees).toLowerCase().includes('employee')
+      ? c.employees
+      : `${c.employees} employees`
+    : '100-250 employees';
+  const description =
+    (c.description || '').trim() ||
+    `${name} is a premier verified organization delivering scalable digital systems and hiring verified engineering talent.`;
+  const website = (c.website || '').trim()
+    ? c.website.startsWith('http')
+      ? c.website
+      : `https://${c.website.toLowerCase()}`
+    : `https://${slug}.com`;
+  const contactEmail = (c.contactEmail || '').trim()
+    ? c.contactEmail.toLowerCase()
+    : `contact@${slug}.com`;
+  const location = (c.location || '').trim() || 'San Francisco, USA';
+  const industry = c.industry || 'Technology';
+  const activeJobs = typeof c.activeJobs === 'number' ? c.activeJobs : (index % 3) + 1;
+
+  return {
+    ...c,
+    name,
+    logo,
+    logoText,
+    employees,
+    description,
+    website,
+    contactEmail,
+    location,
+    industry,
+    activeJobs,
+  };
+};
+
+// Safe storage access with auto-deduplication & legacy mock purging
+export const getStoredCompanies = () => {
   try {
     const raw = localStorage.getItem(COMPANIES_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? deduplicateCompanies(parsed) : [];
+    if (!Array.isArray(parsed)) return [];
+
+    const clean = deduplicateCompanies(
+      parsed
+        .filter((c) => !isLegacyMockCompany(c))
+        .map((c, idx) => normalizeCompany(c, idx))
+    );
+
+    if (clean.length !== parsed.length) {
+      localStorage.setItem(COMPANIES_STORAGE_KEY, JSON.stringify(clean));
+    }
+    return clean;
   } catch (e) {
     console.error('Error reading companies from storage:', e);
     return [];
   }
 };
 
-const setStoredCompanies = (companies) => {
+export const setStoredCompanies = (companies) => {
   try {
-    const clean = deduplicateCompanies(companies);
+    const clean = deduplicateCompanies(
+      (companies || [])
+        .filter((c) => !isLegacyMockCompany(c))
+        .map((c, idx) => normalizeCompany(c, idx))
+    );
     localStorage.setItem(COMPANIES_STORAGE_KEY, JSON.stringify(clean));
   } catch (e) {
     console.error('Error saving companies to storage:', e);
@@ -135,12 +220,18 @@ export const companyService = {
 
       // Overlay user additions / modifications stored in local cache
       const stored = getStoredCompanies();
-      const userAdded = stored.filter((c) => !apiCompanies.some((ac) => String(ac.id) === String(c.id)));
+      const userAdded = stored.filter(
+        (c) => !isLegacyMockCompany(c) && !apiCompanies.some((ac) => String(ac.id) === String(c.id))
+      );
       const userModifiedMap = new Map();
-      stored.forEach((c) => userModifiedMap.set(String(c.id), c));
+      stored.forEach((c) => {
+        if (!isLegacyMockCompany(c)) userModifiedMap.set(String(c.id), c);
+      });
 
       const merged = apiCompanies.map((ac) => userModifiedMap.get(String(ac.id)) || ac);
-      const combined = deduplicateCompanies([...userAdded, ...merged]);
+      const combined = deduplicateCompanies([...userAdded, ...merged]).map((c, idx) =>
+        normalizeCompany(c, idx)
+      );
 
       setStoredCompanies(combined);
       return combined;

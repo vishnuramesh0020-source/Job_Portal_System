@@ -89,6 +89,13 @@ export const QuickActionCards = ({
     },
   ];
 
+  // Candidates should not see recruiter action "Post a New Job"
+  const visibleActions = actions.filter((act) => {
+    if (role === 'candidate' && act.id === 'post-job') return false;
+    if (role === 'recruiter' && act.id === 'quick-apply') return false;
+    return true;
+  });
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -104,7 +111,7 @@ export const QuickActionCards = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {actions.map((act) => {
+        {visibleActions.map((act) => {
           const Icon = act.icon;
           return (
             <div

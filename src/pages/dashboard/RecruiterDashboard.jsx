@@ -46,10 +46,10 @@ export const RecruiterDashboard = () => {
 
   // Recruiter stats overview
   const stats = [
-    { label: 'Platform Jobs', value: totalJobs, icon: Briefcase, color: 'text-emerald-700 bg-emerald-50' },
-    { label: 'Active Postings', value: activeJobPostings, icon: CheckCircle2, color: 'text-teal-700 bg-teal-50' },
-    { label: 'Total Candidates', value: totalCandidates, icon: Users, color: 'text-purple-700 bg-purple-50' },
-    { label: 'Total Applications', value: totalApplications, icon: FileText, color: 'text-blue-700 bg-blue-50' },
+    { label: 'Platform Jobs', value: totalJobs, icon: Briefcase, color: 'text-emerald-700 bg-emerald-50', link: '/jobs' },
+    { label: 'Active Postings', value: activeJobPostings, icon: CheckCircle2, color: 'text-teal-700 bg-teal-50', link: '/jobs' },
+    { label: 'Total Candidates', value: totalCandidates, icon: Users, color: 'text-purple-700 bg-purple-50', link: '/candidates' },
+    { label: 'Total Applications', value: totalApplications, icon: FileText, color: 'text-blue-700 bg-blue-50', link: '/dashboard' },
   ];
 
   return (
@@ -110,7 +110,10 @@ export const RecruiterDashboard = () => {
           return (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4"
+              onClick={() => item.link && navigate(item.link)}
+              className={`bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4 transition-all ${
+                item.link ? 'cursor-pointer hover:border-emerald-300 hover:shadow-md' : ''
+              }`}
             >
               <div className={`p-3 rounded-xl ${item.color}`}>
                 <Icon className="w-6 h-6" />

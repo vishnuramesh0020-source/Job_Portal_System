@@ -18,6 +18,7 @@ import CompaniesList from './pages/companies/CompaniesList';
 import CompanyDetails from './pages/companies/CompanyDetails';
 import JobsList from './pages/jobs/JobsList';
 import JobDetails from './pages/jobs/JobDetails';
+import CandidatesList from './pages/candidates/CandidatesList';
 import Reports from './pages/reports/Reports';
 import NotFound from './pages/NotFound';
 
@@ -44,6 +45,10 @@ function App() {
                 {/* Company Management Routes */}
                 <Route path="/companies" element={<CompaniesList />} />
                 <Route path="/companies/:id" element={<CompanyDetails />} />
+
+                {/* Candidate Talent Directory Routes (For recruiters & platform browsing) */}
+                <Route path="/candidates" element={<CandidatesList />} />
+                <Route path="/candidate" element={<Navigate to="/candidate/dashboard" replace />} />
 
                 {/* Master Responsive Dashboard Route */}
                 <Route

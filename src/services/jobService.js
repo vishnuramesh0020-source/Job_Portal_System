@@ -189,22 +189,43 @@ export const deduplicateJobs = (jobsList) => {
   });
 };
 
-// Safely retrieve stored jobs from localStorage
-const getStoredJobs = () => {
+// Identify legacy mock jobs that should not pollute the pure API directory
+export const isLegacyMockJob = (job) => {
+  if (!job) return true;
+  const idStr = String(job.id || '').trim();
+  // Legacy mock job IDs from mockDashboardData.js: 'job-101' to 'job-120'
+  return /^job-[0-9]{1,3}$/.test(idStr);
+};
+
+// Safely retrieve stored jobs from localStorage with auto legacy mock purging
+export const getStoredJobs = () => {
   try {
     const raw = localStorage.getItem(JOBS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? deduplicateJobs(parsed.map(normalizeJob)) : [];
+    if (!Array.isArray(parsed)) return [];
+    const clean = deduplicateJobs(
+      parsed
+        .filter((j) => !isLegacyMockJob(j))
+        .map(normalizeJob)
+    );
+    if (clean.length !== parsed.length) {
+      localStorage.setItem(JOBS_STORAGE_KEY, JSON.stringify(clean));
+    }
+    return clean;
   } catch (error) {
     console.error('Failed to parse jobs from localStorage:', error);
     return [];
   }
 };
 
-const setStoredJobs = (jobs) => {
+export const setStoredJobs = (jobs) => {
   try {
-    const clean = deduplicateJobs(jobs);
+    const clean = deduplicateJobs(
+      (jobs || [])
+        .filter((j) => !isLegacyMockJob(j))
+        .map(normalizeJob)
+    );
     localStorage.setItem(JOBS_STORAGE_KEY, JSON.stringify(clean));
   } catch (error) {
     console.error('Failed to save jobs to localStorage:', error);

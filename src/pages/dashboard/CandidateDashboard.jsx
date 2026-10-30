@@ -32,7 +32,6 @@ import {
   Trash2,
   ArrowUpRight,
   RotateCcw,
-  BarChart3,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -233,14 +232,6 @@ export const CandidateDashboard = () => {
               <Edit3 className="w-4 h-4" />
               Edit Profile
             </button>
-
-            <Link
-              to="/reports"
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-emerald-900 text-xs font-bold shadow-md hover:bg-emerald-50 transition-all"
-            >
-              <BarChart3 className="w-4 h-4 text-emerald-700" />
-              Reports & Analytics
-            </Link>
 
             <button
               type="button"

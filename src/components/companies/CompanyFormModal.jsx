@@ -30,6 +30,7 @@ export const CompanyFormModal = ({
 
   // Prepopulate form when initialData changes or modal opens
   useEffect(() => {
+    if (!isOpen) return;
     if (initialData && isEditMode) {
       reset({
         name: initialData.name || '',
